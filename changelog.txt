@@ -1,5 +1,7 @@
 Changelog
 
+* 8/7/2019 - Took over development of this great dead project. Improved run time by a huge factor (it should run in just a few seconds total, vs. a few seconds PER addon update). Added clickable executables, so users don't have to run python in their terminal. Cleaned up lots of style and refactored some code.
+
 * 8/24/2018 - Added update message to notify if a new version of WoWAddonUpdater is available
 
 * 8/24/2018 - Added subfolder information to installed.txt - Should now allow multiple lines with different subfolders from the same addon
