@@ -15,7 +15,7 @@ CHANGELOG_FILE = 'changelog.txt'
 NEW_UPDATE_MESSAGE = 'A new update is available! Check it out at https://github.com/grrttedwards/wow-addon-updater !'
 
 
-def confirmExit():
+def confirm_exit():
     input('\nPress the Enter key to exit')
     exit(0)
 
@@ -36,7 +36,7 @@ class AddonUpdater:
         # Read config file
         if not isfile('config.ini'):
             print('Failed to read configuration file. Are you sure there is a file called "config.ini"?\n')
-            confirmExit()
+            confirm_exit()
 
         config = configparser.ConfigParser()
         config.read('config.ini')
@@ -48,11 +48,11 @@ class AddonUpdater:
             self.AUTO_CLOSE = config['WOW ADDON UPDATER']['Close Automatically When Completed']
         except Exception:
             print('Failed to parse configuration file. Are you sure it is formatted correctly?\n')
-            confirmExit()
+            confirm_exit()
 
         if not isfile(self.ADDON_LIST_FILE):
             print('Failed to read addon list file. Are you sure the file exists?\n')
-            confirmExit()
+            confirm_exit()
 
         if not isfile(self.INSTALLED_VERS_FILE):
             with open(self.INSTALLED_VERS_FILE, 'w') as newInstalledVersFile:
@@ -80,7 +80,7 @@ class AddonUpdater:
             print("".join(word.ljust(col_width) for word in ("Name", "Iversion", "Cversion")))
             for row in uberlist:
                 print("".join(word.ljust(col_width) for word in row), end='\n')
-            confirmExit()
+            confirm_exit()
 
     def update_addon(self, addon, uberlist):
         current_node = []
@@ -92,8 +92,8 @@ class AddonUpdater:
             addon = addon.split('|')[0]
         else:
             subfolder = ''
-        addon_name = SiteHandler.getAddonName(addon)
-        latest_version = SiteHandler.getCurrentVersion(addon)
+        addon_name = SiteHandler.get_addon_name(addon)
+        latest_version = SiteHandler.get_current_version(addon)
         if latest_version is None:
             latest_version = 'Not Available'
         current_node.append(addon_name)
@@ -101,7 +101,7 @@ class AddonUpdater:
         installed_version = self.get_installed_version(addon, subfolder)
         if not latest_version == installed_version:
             print('Installing/updating addon: ' + addon_name + ' to version: ' + latest_version + '\n')
-            ziploc = SiteHandler.findZiploc(addon)
+            ziploc = SiteHandler.find_ziploc(addon)
             install_success = self.get_addon(ziploc, subfolder)
             current_node.append(self.get_installed_version(addon, subfolder))
             if install_success and (latest_version is not ''):
@@ -142,7 +142,7 @@ class AddonUpdater:
                 print('Failed to get subfolder ' + subfolder)
 
     def get_installed_version(self, addonpage, subfolder):
-        addon_name = SiteHandler.getAddonName(addonpage)
+        addon_name = SiteHandler.get_addon_name(addonpage)
         installed_vers = configparser.ConfigParser()
         installed_vers.read(self.INSTALLED_VERS_FILE)
         try:
@@ -155,7 +155,7 @@ class AddonUpdater:
             return 'version not found'
 
     def set_installed_version(self, addonpage, subfolder, currentVersion):
-        addon_name = SiteHandler.getAddonName(addonpage)
+        addon_name = SiteHandler.get_addon_name(addonpage)
         installed_vers = configparser.ConfigParser()
         installed_vers.read(self.INSTALLED_VERS_FILE)
         if subfolder:
