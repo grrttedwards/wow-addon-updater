@@ -9,9 +9,21 @@ import packages.requests as requests
 import threading
 
 
+CHANGELOG_URL = 'https://raw.githubusercontent.com/grrttedwards/wow-addon-updater/master/changelog.txt'
+CHANGELOG_FILE = 'changelog.txt'
+NEW_UPDATE_MESSAGE = 'A new update is available! Check it out at https://github.com/grrttedwards/wow-addon-updater !'
+
 def confirmExit():
     input('\nPress the Enter key to exit')
     exit(0)
+
+def check_version():
+    if isfile(CHANGELOG_FILE):
+        downloaded_changelog = requests.get(CHANGELOG_URL).text
+        with open(CHANGELOG_FILE, mode='r') as f:
+            current_changelog = f.read()
+        if downloaded_changelog != current_changelog:
+            print(NEW_UPDATE_MESSAGE)
 
 
 class AddonUpdater:
@@ -151,19 +163,8 @@ class AddonUpdater:
 
 
 def main():
-    if(isfile('changelog.txt')):
-        downloadedChangelog = requests.get('https://raw.githubusercontent.com/kuhnerdm/wow-addon-updater/master/changelog.txt').text.split('\n')
-        with open('changelog.txt') as cl:
-            presentChangelog = cl.readlines()
-            for i in range(len(presentChangelog)):
-                presentChangelog[i] = presentChangelog[i].strip('\n')
-
-    if(downloadedChangelog != presentChangelog):
-        print('A new update to WoWAddonUpdater is available! Check it out at https://github.com/kuhnerdm/wow-addon-updater !')
-    
-    addonupdater = AddonUpdater()
-    addonupdater.update()
-    return
+    check_version()
+    AddonUpdater().update()
 
 
 if __name__ == "__main__":
