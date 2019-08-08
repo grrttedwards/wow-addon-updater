@@ -55,10 +55,10 @@ class AddonUpdater:
             confirm_exit()
 
         if not isfile(self.INSTALLED_VERS_FILE):
-            with open(self.INSTALLED_VERS_FILE, 'w') as newInstalledVersFile:
-                newInstalledVers = configparser.ConfigParser()
-                newInstalledVers['Installed Versions'] = {}
-                newInstalledVers.write(newInstalledVersFile)
+            with open(self.INSTALLED_VERS_FILE, 'w') as new_installed_vers_file:
+                new_installed_vers = configparser.ConfigParser()
+                new_installed_vers['Installed Versions'] = {}
+                new_installed_vers.write(new_installed_vers_file)
         return
 
     def update(self):
