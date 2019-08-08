@@ -1,21 +1,24 @@
-import zipfile, configparser
-from io import BytesIO
-from os.path import isfile, join
-from os import listdir
+import configparser
 import shutil
 import tempfile
+import threading
+import zipfile
+from io import BytesIO
+from os import listdir
+from os.path import isfile, join
+
 import SiteHandler
 import packages.requests as requests
-import threading
-
 
 CHANGELOG_URL = 'https://raw.githubusercontent.com/grrttedwards/wow-addon-updater/master/changelog.txt'
 CHANGELOG_FILE = 'changelog.txt'
 NEW_UPDATE_MESSAGE = 'A new update is available! Check it out at https://github.com/grrttedwards/wow-addon-updater !'
 
+
 def confirmExit():
     input('\nPress the Enter key to exit')
     exit(0)
+
 
 def check_version():
     if isfile(CHANGELOG_FILE):
@@ -65,16 +68,16 @@ class AddonUpdater:
         with open(self.ADDON_LIST_FILE, "r") as fin:
             for line in fin:
                 threads.append(threading.Thread(target=self.update_addon, args=(line, uberlist)))
-                
+
         for thread in threads:
             thread.start()
 
         for thread in threads:
             thread.join()
-        
+
         if self.AUTO_CLOSE == 'False':
             col_width = max(len(word) for row in uberlist for word in row) + 2  # padding
-            print("".join(word.ljust(col_width) for word in ("Name","Iversion","Cversion")))
+            print("".join(word.ljust(col_width) for word in ("Name", "Iversion", "Cversion")))
             for row in uberlist:
                 print("".join(word.ljust(col_width) for word in row), end='\n')
             confirmExit()
@@ -84,82 +87,84 @@ class AddonUpdater:
         addon = addon.rstrip('\n')
         if not addon or addon.startswith('#'):
             return
-        if '|' in addon: # Expected input format: "mydomain.com/myzip.zip" or "mydomain.com/myzip.zip|subfolder"
+        if '|' in addon:  # Expected input format: "mydomain.com/myzip.zip" or "mydomain.com/myzip.zip|subfolder"
             subfolder = addon.split('|')[1]
             addon = addon.split('|')[0]
         else:
             subfolder = ''
-        addonName = SiteHandler.getAddonName(addon)
-        currentVersion = SiteHandler.getCurrentVersion(addon)
-        if currentVersion is None:
-            currentVersion = 'Not Available'
-        current_node.append(addonName)
-        current_node.append(currentVersion)
-        installedVersion = self.getInstalledVersion(addon, subfolder)
-        if not currentVersion == installedVersion:
-            print('Installing/updating addon: ' + addonName + ' to version: ' + currentVersion + '\n')
+        addon_name = SiteHandler.getAddonName(addon)
+        latest_version = SiteHandler.getCurrentVersion(addon)
+        if latest_version is None:
+            latest_version = 'Not Available'
+        current_node.append(addon_name)
+        current_node.append(latest_version)
+        installed_version = self.get_installed_version(addon, subfolder)
+        if not latest_version == installed_version:
+            print('Installing/updating addon: ' + addon_name + ' to version: ' + latest_version + '\n')
             ziploc = SiteHandler.findZiploc(addon)
-            install_success = self.getAddon(ziploc, subfolder)
-            current_node.append(self.getInstalledVersion(addon, subfolder))
-            if install_success and (currentVersion is not ''):
-                self.setInstalledVersion(addon, subfolder, currentVersion)
+            install_success = self.get_addon(ziploc, subfolder)
+            current_node.append(self.get_installed_version(addon, subfolder))
+            if install_success and (latest_version is not ''):
+                self.set_installed_version(addon, subfolder, latest_version)
         else:
-            print(addonName + ' version ' + currentVersion + ' is up to date.\n')
+            print(addon_name + ' version ' + latest_version + ' is up to date.\n')
             current_node.append("Up to date")
         uberlist.append(current_node)
 
-    def getAddon(self, ziploc, subfolder):
+    def get_addon(self, ziploc, subfolder):
         if ziploc == '':
             return False
         try:
             r = requests.get(ziploc, stream=True)
-            r.raise_for_status()   # Raise an exception for HTTP errors
-            z = zipfile.ZipFile(BytesIO(r.content))
-            self.extract(z, ziploc, subfolder)
+            r.raise_for_status()  # Raise an exception for HTTP errors
+            zipped = zipfile.ZipFile(BytesIO(r.content))
+            self.extract(zipped, subfolder)
             return True
         except Exception:
             print('Failed to download or extract zip file for addon. Skipping...\n')
             return False
-    
-    def extract(self, zip, url, subfolder):
+
+    def extract(self, zipped, subfolder):
         if subfolder == '':
-            zip.extractall(self.WOW_ADDON_LOCATION)
-        else: # Pull subfolder out to main level, remove original extracted folder
+            zipped.extractall(self.WOW_ADDON_LOCATION)
+        else:  # Pull subfolder out to main level, remove original extracted folder
             try:
                 with tempfile.TemporaryDirectory() as tempDirPath:
-                    zip.extractall(tempDirPath)
-                    extractedFolderPath = join(tempDirPath, listdir(tempDirPath)[0])
-                    subfolderPath = join(extractedFolderPath, subfolder)
+                    zipped.extractall(tempDirPath)
+                    extracted_folder_path = join(tempDirPath, listdir(tempDirPath)[0])
+                    subfolder_path = join(extracted_folder_path, subfolder)
                     destination_dir = join(self.WOW_ADDON_LOCATION, subfolder)
                     # Delete the existing copy, as shutil.copytree will not work if
                     # the destination directory already exists!
                     shutil.rmtree(destination_dir, ignore_errors=True)
-                    shutil.copytree(subfolderPath, destination_dir)
+                    shutil.copytree(subfolder_path, destination_dir)
             except Exception:
                 print('Failed to get subfolder ' + subfolder)
 
-    def getInstalledVersion(self, addonpage, subfolder):
-        addonName = SiteHandler.getAddonName(addonpage)
-        installedVers = configparser.ConfigParser()
-        installedVers.read(self.INSTALLED_VERS_FILE)
+    def get_installed_version(self, addonpage, subfolder):
+        addon_name = SiteHandler.getAddonName(addonpage)
+        installed_vers = configparser.ConfigParser()
+        installed_vers.read(self.INSTALLED_VERS_FILE)
         try:
-            if(subfolder):
-                return installedVers['Installed Versions'][addonName + '|' + subfolder] # Keep subfolder info in installed listing
+            if subfolder:
+                # Keep subfolder info in installed listing
+                return installed_vers['Installed Versions'][addon_name + '|' + subfolder]
             else:
-                return installedVers['Installed Versions'][addonName]
+                return installed_vers['Installed Versions'][addon_name]
         except Exception:
             return 'version not found'
 
-    def setInstalledVersion(self, addonpage, subfolder, currentVersion):
-        addonName = SiteHandler.getAddonName(addonpage)
-        installedVers = configparser.ConfigParser()
-        installedVers.read(self.INSTALLED_VERS_FILE)
-        if(subfolder):
-            installedVers.set('Installed Versions', addonName + '|' + subfolder, currentVersion) # Keep subfolder info in installed listing
+    def set_installed_version(self, addonpage, subfolder, currentVersion):
+        addon_name = SiteHandler.getAddonName(addonpage)
+        installed_vers = configparser.ConfigParser()
+        installed_vers.read(self.INSTALLED_VERS_FILE)
+        if subfolder:
+            # Keep subfolder info in installed listing
+            installed_vers.set('Installed Versions', addon_name + '|' + subfolder, currentVersion)
         else:
-            installedVers.set('Installed Versions', addonName, currentVersion)
+            installed_vers.set('Installed Versions', addon_name, currentVersion)
         with open(self.INSTALLED_VERS_FILE, 'w') as installedVersFile:
-            installedVers.write(installedVersFile)
+            installed_vers.write(installedVersFile)
 
 
 def main():
