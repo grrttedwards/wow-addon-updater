@@ -6,6 +6,7 @@ import shutil
 import tempfile
 import SiteHandler
 import packages.requests as requests
+import threading
 
 
 def confirmExit():
@@ -47,42 +48,53 @@ class AddonUpdater:
 
     def update(self):
         uberlist = []
+        threads = []
+
         with open(self.ADDON_LIST_FILE, "r") as fin:
             for line in fin:
-                current_node = []
-                line = line.rstrip('\n')
-                if not line or line.startswith('#'):
-                    continue
-                if '|' in line: # Expected input format: "mydomain.com/myzip.zip" or "mydomain.com/myzip.zip|subfolder"
-                    subfolder = line.split('|')[1]
-                    line = line.split('|')[0]
-                else:
-                    subfolder = ''
-                addonName = SiteHandler.getAddonName(line)
-                currentVersion = SiteHandler.getCurrentVersion(line)
-                if currentVersion is None:
-                    currentVersion = 'Not Available'
-                current_node.append(addonName)
-                current_node.append(currentVersion)
-                installedVersion = self.getInstalledVersion(line, subfolder)
-                if not currentVersion == installedVersion:
-                    print('Installing/updating addon: ' + addonName + ' to version: ' + currentVersion + '\n')
-                    ziploc = SiteHandler.findZiploc(line)
-                    install_success = False
-                    install_success = self.getAddon(ziploc, subfolder)
-                    current_node.append(self.getInstalledVersion(line, subfolder))
-                    if install_success and (currentVersion is not ''):
-                        self.setInstalledVersion(line, subfolder, currentVersion)
-                else:
-                    print(addonName + ' version ' + currentVersion + ' is up to date.\n')
-                    current_node.append("Up to date")
-                uberlist.append(current_node)
+                threads.append(threading.Thread(target=self.update_addon, args=(line, uberlist)))
+                
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+        
         if self.AUTO_CLOSE == 'False':
             col_width = max(len(word) for row in uberlist for word in row) + 2  # padding
             print("".join(word.ljust(col_width) for word in ("Name","Iversion","Cversion")))
             for row in uberlist:
                 print("".join(word.ljust(col_width) for word in row), end='\n')
             confirmExit()
+
+    def update_addon(self, addon, uberlist):
+        current_node = []
+        addon = addon.rstrip('\n')
+        if not addon or addon.startswith('#'):
+            return
+        if '|' in addon: # Expected input format: "mydomain.com/myzip.zip" or "mydomain.com/myzip.zip|subfolder"
+            subfolder = addon.split('|')[1]
+            addon = addon.split('|')[0]
+        else:
+            subfolder = ''
+        addonName = SiteHandler.getAddonName(addon)
+        currentVersion = SiteHandler.getCurrentVersion(addon)
+        if currentVersion is None:
+            currentVersion = 'Not Available'
+        current_node.append(addonName)
+        current_node.append(currentVersion)
+        installedVersion = self.getInstalledVersion(addon, subfolder)
+        if not currentVersion == installedVersion:
+            print('Installing/updating addon: ' + addonName + ' to version: ' + currentVersion + '\n')
+            ziploc = SiteHandler.findZiploc(addon)
+            install_success = self.getAddon(ziploc, subfolder)
+            current_node.append(self.getInstalledVersion(addon, subfolder))
+            if install_success and (currentVersion is not ''):
+                self.setInstalledVersion(addon, subfolder, currentVersion)
+        else:
+            print(addonName + ' version ' + currentVersion + ' is up to date.\n')
+            current_node.append("Up to date")
+        uberlist.append(current_node)
 
     def getAddon(self, ziploc, subfolder):
         if ziploc == '':
