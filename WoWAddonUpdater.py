@@ -28,7 +28,7 @@ def check_version():
 
 
 class AddonUpdater:
-    ADDON_UNAVAILABLE = 'Unavailable'
+    UNAVAILABLE = 'Unavailable'
 
     def __init__(self):
         self.manifest = []
@@ -58,10 +58,10 @@ class AddonUpdater:
         threads = []
 
         with open(self.ADDON_LIST_FILE, 'r') as fin:
-            addon_urls = fin.read().splitlines()
+            addon_entries = fin.read().splitlines()
 
-        for addon_url in addon_urls:
-            thread = threading.Thread(target=self.update_addon, args=(addon_url,))
+        for addon_entry in addon_entries:
+            thread = threading.Thread(target=self.update_addon, args=(addon_entry,))
             threads.append(thread)
         for thread in threads:
             thread.start()
@@ -72,38 +72,39 @@ class AddonUpdater:
 
         self.display_results()
 
-    def update_addon(self, addon_url):
-        if not addon_url or addon_url.startswith('#'):
+    def update_addon(self, addon_entry):
+        if not addon_entry or addon_entry.startswith('#'):
             return
 
         # Expected format: "mydomain.com/myzip.zip" or "mydomain.com/myzip.zip|subfolder"
-        addon_url, *subfolder = addon_url.split('|')
+        addon_url, *_ = addon_entry.split('|')
 
-        addon_name = SiteHandler.get_addon_name(addon_url)
-
+        addon_name = SiteHandler.get_addon_name(addon_entry)
         try:
             latest_version = SiteHandler.get_latest_version(addon_url)
         except Exception:
-            print(f"Failed to retrieve latest version for {addon_url}.\n")
-            latest_version = AddonUpdater.ADDON_UNAVAILABLE
+            print(f"Failed to retrieve latest version for {addon_name}.\n")
+            latest_version = AddonUpdater.UNAVAILABLE
 
-        installed_version = self.get_installed_version(addon_name, subfolder)
-        if latest_version != AddonUpdater.ADDON_UNAVAILABLE:
+        installed_version = self.get_installed_version(addon_name)
+        if latest_version == AddonUpdater.UNAVAILABLE:
             pass
         elif latest_version == installed_version:
             print(f"{addon_name} version {latest_version} is up to date.\n")
         else:
-            if subfolder:
-                addon_name += '|' + subfolder
-            print(f"Installing/updating addon: {addon_name} to version: {latest_version}...")
-            zip_url = SiteHandler.find_zip_url(addon_url)
+            print(f"Installing/updating addon: {addon_name} to version: {latest_version}...\n")
+
             try:
+                zip_url = SiteHandler.find_zip_url(addon_url)
+                _, [subfolder] = addon_name.split('|')
                 addon_zip = self.get_addon_zip(zip_url)
                 self.extract_to_addons(addon_zip, subfolder)
             except HTTPError:
                 print(f"Failed to download zip for [{addon_name}]")
             except KeyError:
                 print(f"Failed to find subfolder [{subfolder}] in archive for [{addon_name}]")
+            except:
+                latest_version
 
         addon_entry = [addon_name, addon_url, installed_version, latest_version]
         self.manifest.append(addon_entry)
@@ -114,18 +115,16 @@ class AddonUpdater:
         return zipfile.ZipFile(BytesIO(r.content))
 
     def extract_to_addons(self, zipped: zipfile.ZipFile, subfolder):
-        if not subfolder:
-            zipped.extractall(self.WOW_ADDON_LOCATION)
-        else:
+        if subfolder:
+            [subfolder] = subfolder
             destination_dir = join(self.WOW_ADDON_LOCATION, subfolder)
             zipped.extract(member=subfolder + '/', path=destination_dir)
+        else:
+            zipped.extractall(self.WOW_ADDON_LOCATION)
 
-    def get_installed_version(self, addon_name, subfolder):
+    def get_installed_version(self, addon_name):
         installed_vers = configparser.ConfigParser()
         installed_vers.read(self.INSTALLED_VERS_FILE)
-        if subfolder:
-            # Keep subfolder info in installed listing
-            addon_name += '|' + subfolder
         try:
             return installed_vers.get(addon_name, 'version')
         except (configparser.NoSectionError, configparser.NoOptionError):
@@ -134,7 +133,7 @@ class AddonUpdater:
     def set_installed_versions(self):
         versions = {}
         for (addon_name, addon_url, _, new_version) in self.manifest:
-            if new_version != AddonUpdater.ADDON_UNAVAILABLE:
+            if new_version != AddonUpdater.UNAVAILABLE:
                 versions[addon_name] = {"url": addon_url, "version": new_version}
 
         installed_versions = configparser.ConfigParser()
