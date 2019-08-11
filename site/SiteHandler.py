@@ -8,25 +8,26 @@ from site.WoWAce import WoWAce
 from site.WoWInterface import WoWInterface
 
 
+class UnknownSiteError(RuntimeError):
+    pass
+
+
 def get_handler(url: str) -> Site:
-    # Curse
     if Curse.handles(url):
         return Curse(url)
     elif WoWAce.handles(url):
         return WoWAce(url)
-    # Tukui
-    # elif url.startswith('https://git.tukui.org/'):
-    #     return Tukui(url)
-    #     return get_tukui_version(url)
-    #
-    # # Wowinterface
-    # elif url.startswith('https://www.wowinterface.com/'):
-    #     return WoWInterface(url)
-    #     return get_wowinterface_version(url)
+    elif Tukui.handles(url):
+        return Tukui(url)
+    elif WoWInterface(url):
+        return WoWInterface(url)
 
-    # Unknown site
+    # for subclass in Site.__subclasses__():
+    #     if subclass.handles(url):
+    #         return subclass(url)
     else:
-        print('Invalid addon page.')
+        # Unknown site
+        raise UnknownSiteError(f"Unknown addon source: {url}")
 
 
 def find_zip_url(addonpage):
