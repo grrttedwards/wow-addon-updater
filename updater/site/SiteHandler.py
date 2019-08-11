@@ -1,11 +1,12 @@
 import re
 
 import packages.requests as requests
-from AbstractSite import AbstractSite
-from Curse import Curse
-from Tukui import Tukui
-from WoWAce import WoWAce
-from WoWInterface import WoWInterface
+
+from updater.site.AbstractSite import AbstractSite
+from updater.site.Curse import Curse
+from updater.site.Tukui import Tukui
+from updater.site.WoWAce import WoWAce
+from updater.site.WoWInterface import WoWInterface
 
 
 class UnknownSiteError(RuntimeError):

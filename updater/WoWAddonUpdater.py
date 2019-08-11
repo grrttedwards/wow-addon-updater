@@ -4,9 +4,9 @@ import zipfile
 from io import BytesIO
 from os.path import isfile, join
 
-import SiteHandler
 import packages.requests as requests
 from packages.requests import HTTPError
+from updater.site import SiteHandler
 
 CHANGELOG_URL = 'https://raw.githubusercontent.com/grrttedwards/wow-addon-updater/master/changelog.txt'
 CHANGELOG_FILE = 'changelog.txt'
@@ -104,7 +104,7 @@ class AddonUpdater:
             except KeyError:
                 print(f"Failed to find subfolder [{subfolder}] in archive for [{addon_name}]")
 
-        addon_entry = [addon_name, addon_url, installed_version, latest_version, install_path]
+        addon_entry = [addon_name, addon_url, installed_version, latest_version]
         self.manifest.append(addon_entry)
 
     def get_addon_zip(self, zip_url):
@@ -117,7 +117,6 @@ class AddonUpdater:
             [subfolder] = subfolder
             destination_dir = join(self.WOW_ADDON_LOCATION, subfolder)
             zipped.extract(member=subfolder + '/', path=destination_dir)
-            return
         else:
             zipped.extractall(self.WOW_ADDON_LOCATION)
 
@@ -156,13 +155,6 @@ class AddonUpdater:
 
 
 def main():
-    handler = SiteHandler.get_handler("https://git.tukui.org/elvui/elvui|ElvUI")
-    name = handler.get_addon_name()
-    url = handler.find_zip_url()
-    latest = handler.get_latest_version()
-    print(url)
-    return
-
     check_version()
     AddonUpdater().update_all()
 
