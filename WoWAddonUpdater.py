@@ -96,7 +96,7 @@ class AddonUpdater:
 
             try:
                 zip_url = SiteHandler.find_zip_url(addon_url)
-                _, [subfolder] = addon_name.split('|')
+                _, *subfolder = addon_name.split('|')
                 addon_zip = self.get_addon_zip(zip_url)
                 self.extract_to_addons(addon_zip, subfolder)
             except HTTPError:
