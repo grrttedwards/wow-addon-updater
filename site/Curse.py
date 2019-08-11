@@ -1,5 +1,5 @@
 import packages.requests as requests
-from site.Site import Site
+from site.AbstractSite import Site
 
 
 class Curse(Site):

@@ -1,8 +1,8 @@
 import re
 
 import packages.requests as requests
+from site.AbstractSite import Site
 from site.Curse import Curse
-from site.Site import Site
 from site.Tukui import Tukui
 from site.WoWAce import WoWAce
 from site.WoWInterface import WoWInterface
