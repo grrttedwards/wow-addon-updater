@@ -1,8 +1,8 @@
 import packages.requests as requests
-from site.AbstractSite import Site
+from updater.site.AbstractSite import AbstractSite
 
 
-class WoWAce(Site):
+class WoWAce(AbstractSite):
     URL = 'https://www.wowace.com/projects/'
 
     def __init__(self, url: str):

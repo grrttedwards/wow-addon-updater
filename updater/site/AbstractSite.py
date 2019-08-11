@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class Site(ABC):
+class AbstractSite(ABC):
     def __init__(self, url: str):
         self.url = url
 

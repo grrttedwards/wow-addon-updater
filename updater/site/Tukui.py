@@ -1,10 +1,10 @@
 import re
 
 import packages.requests as requests
-from site.AbstractSite import Site
+from updater.site.AbstractSite import AbstractSite
 
 
-class Tukui(Site):
+class Tukui(AbstractSite):
     URL = 'https://git.tukui.org'
 
     def __init__(self, url: str):

@@ -1,8 +1,8 @@
 import packages.requests as requests
-from site.AbstractSite import Site
+from updater.site.AbstractSite import AbstractSite
 
 
-class WoWInterface(Site):
+class WoWInterface(AbstractSite):
     URL = 'https://www.wowinterface.com/downloads/'
 
     def __init__(self, url: str):

@@ -1,25 +1,25 @@
 import re
 
 import packages.requests as requests
-from site.AbstractSite import Site
-from site.Curse import Curse
-from site.Tukui import Tukui
-from site.WoWAce import WoWAce
-from site.WoWInterface import WoWInterface
+from AbstractSite import AbstractSite
+from Curse import Curse
+from Tukui import Tukui
+from WoWAce import WoWAce
+from WoWInterface import WoWInterface
 
 
 class UnknownSiteError(RuntimeError):
     pass
 
 
-def get_handler(url: str) -> Site:
+def get_handler(url: str) -> AbstractSite:
     if Curse.handles(url):
         return Curse(url)
     elif WoWAce.handles(url):
         return WoWAce(url)
     elif Tukui.handles(url):
         return Tukui(url)
-    elif WoWInterface(url):
+    elif WoWInterface.handles(url):
         return WoWInterface(url)
 
     # for subclass in Site.__subclasses__():

@@ -1,8 +1,8 @@
 import packages.requests as requests
-from site.AbstractSite import Site
+from updater.site.AbstractSite import AbstractSite
 
 
-class Curse(Site):
+class Curse(AbstractSite):
     OLD_CURSE_URL = 'https://mods.curse.com/addons/wow/'
     OLD_PROJECT_URL = 'https://wow.curseforge.com/projects/'
     MAIN_URL = 'https://www.curseforge.com/wow/addons/'
