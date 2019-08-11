@@ -103,8 +103,6 @@ class AddonUpdater:
                 print(f"Failed to download zip for [{addon_name}]")
             except KeyError:
                 print(f"Failed to find subfolder [{subfolder}] in archive for [{addon_name}]")
-            except:
-                latest_version
 
         addon_entry = [addon_name, addon_url, installed_version, latest_version]
         self.manifest.append(addon_entry)
