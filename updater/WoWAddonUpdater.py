@@ -4,7 +4,7 @@ import zipfile
 from io import BytesIO
 from os.path import isfile, join
 
-from site import SiteHandler
+import SiteHandler
 import packages.requests as requests
 from packages.requests import HTTPError
 
@@ -96,7 +96,7 @@ class AddonUpdater:
 
             try:
                 zip_url = SiteHandler.find_zip_url(addon_url)
-                _, [subfolder] = addon_name.split('|')
+                _, *subfolder = addon_name.split('|')
                 addon_zip = self.get_addon_zip(zip_url)
                 self.extract_to_addons(addon_zip, subfolder)
             except HTTPError:
@@ -104,7 +104,7 @@ class AddonUpdater:
             except KeyError:
                 print(f"Failed to find subfolder [{subfolder}] in archive for [{addon_name}]")
 
-        addon_entry = [addon_name, addon_url, installed_version, latest_version]
+        addon_entry = [addon_name, addon_url, installed_version, latest_version, install_path]
         self.manifest.append(addon_entry)
 
     def get_addon_zip(self, zip_url):
@@ -117,6 +117,7 @@ class AddonUpdater:
             [subfolder] = subfolder
             destination_dir = join(self.WOW_ADDON_LOCATION, subfolder)
             zipped.extract(member=subfolder + '/', path=destination_dir)
+            return
         else:
             zipped.extractall(self.WOW_ADDON_LOCATION)
 
@@ -155,6 +156,13 @@ class AddonUpdater:
 
 
 def main():
+    handler = SiteHandler.get_handler("https://git.tukui.org/elvui/elvui|ElvUI")
+    name = handler.get_addon_name()
+    url = handler.find_zip_url()
+    latest = handler.get_latest_version()
+    print(url)
+    return
+
     check_version()
     AddonUpdater().update_all()
 
