@@ -4,7 +4,7 @@ import zipfile
 from io import BytesIO
 from os.path import isfile, join
 
-import SiteHandler
+from site import SiteHandler
 import packages.requests as requests
 from packages.requests import HTTPError
 
