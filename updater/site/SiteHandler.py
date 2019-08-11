@@ -1,6 +1,6 @@
 import re
 
-import requests as requests
+import requests
 
 from updater.site.AbstractSite import AbstractSite
 from updater.site.Curse import Curse
