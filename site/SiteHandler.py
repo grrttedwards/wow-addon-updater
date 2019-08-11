@@ -1,8 +1,33 @@
-import packages.requests as requests
 import re
 
+import packages.requests as requests
+from site.Curse import Curse
+from site.Site import Site
+from site.Tukui import Tukui
+from site.WoWAce import WoWAce
+from site.WoWInterface import WoWInterface
 
-# Site splitter
+
+def get_handler(url: str) -> Site:
+    # Curse
+    if Curse.handles(url):
+        return Curse(url)
+    elif WoWAce.handles(url):
+        return WoWAce(url)
+    # Tukui
+    # elif url.startswith('https://git.tukui.org/'):
+    #     return Tukui(url)
+    #     return get_tukui_version(url)
+    #
+    # # Wowinterface
+    # elif url.startswith('https://www.wowinterface.com/'):
+    #     return WoWInterface(url)
+    #     return get_wowinterface_version(url)
+
+    # Unknown site
+    else:
+        print('Invalid addon page.')
+
 
 def find_zip_url(addonpage):
     # Curse
