@@ -67,11 +67,12 @@ pipenv install --dev
 
 Run tests with:
 ```bash
-pipenv run coverage run --source=updater -m unittest -v
+pipenv run -m unittest -v
 ```
 
-See code coverage with:
+or tests with coverage:
 ```bash
+pipenv run coverage run --source=updater -m unittest -v
 pipenv run coverage report
 ```
 
