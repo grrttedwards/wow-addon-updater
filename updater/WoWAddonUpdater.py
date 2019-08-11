@@ -4,8 +4,9 @@ import zipfile
 from io import BytesIO
 from os.path import isfile, join
 
-import packages.requests as requests
-from packages.requests import HTTPError
+import requests
+from requests import HTTPError
+
 from updater.site import SiteHandler
 
 CHANGELOG_URL = 'https://raw.githubusercontent.com/grrttedwards/wow-addon-updater/master/changelog.txt'
