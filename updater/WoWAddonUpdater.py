@@ -4,9 +4,9 @@ import zipfile
 from io import BytesIO
 from os.path import isfile, join
 
-import SiteHandler
 import packages.requests as requests
 from packages.requests import HTTPError
+from updater.site import SiteHandler
 
 CHANGELOG_URL = 'https://raw.githubusercontent.com/grrttedwards/wow-addon-updater/master/changelog.txt'
 CHANGELOG_FILE = 'changelog.txt'
@@ -103,8 +103,6 @@ class AddonUpdater:
                 print(f"Failed to download zip for [{addon_name}]")
             except KeyError:
                 print(f"Failed to find subfolder [{subfolder}] in archive for [{addon_name}]")
-            except:
-                latest_version
 
         addon_entry = [addon_name, addon_url, installed_version, latest_version]
         self.manifest.append(addon_entry)
