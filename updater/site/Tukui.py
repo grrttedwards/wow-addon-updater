@@ -1,6 +1,7 @@
 import re
 
-import packages.requests as requests
+import requests
+
 from updater.site.AbstractSite import AbstractSite
 
 
