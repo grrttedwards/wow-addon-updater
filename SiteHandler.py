@@ -4,7 +4,7 @@ import re
 
 # Site splitter
 
-def find_ziploc(addonpage):
+def find_zip_url(addonpage):
     # Curse
     if addonpage.startswith('https://mods.curse.com/addons/wow/'):
         return curse(convert_old_curse_url(addonpage))
@@ -40,7 +40,7 @@ def find_ziploc(addonpage):
         print('Invalid addon page.')
 
 
-def get_current_version(addonpage):
+def get_latest_version(addonpage):
     # Curse
     if addonpage.startswith('https://mods.curse.com/addons/wow/'):
         return get_curse_version(convert_old_curse_url(addonpage))
@@ -68,8 +68,8 @@ def get_current_version(addonpage):
         print('Invalid addon page.')
 
 
-def get_addon_name(addonpage):
-    addon_name = addonpage.replace('https://mods.curse.com/addons/wow/', '')
+def get_addon_name(addon_url):
+    addon_name = addon_url.replace('https://mods.curse.com/addons/wow/', '')
     addon_name = addon_name.replace('https://www.curseforge.com/wow/addons/', '')
     addon_name = addon_name.replace('https://wow.curseforge.com/projects/', '')
     addon_name = addon_name.replace('https://www.wowinterface.com/downloads/', '')
@@ -95,7 +95,7 @@ def curse(addonpage):
         return 'https://www.curseforge.com' + content_string[index_of_ziploc:end_quote]
     except Exception:
         print('Failed to find downloadable zip file for addon. Skipping...\n')
-        return ''
+        raise
 
 
 def curse_datastore(addonpage):
@@ -124,7 +124,7 @@ def curse_datastore(addonpage):
         return project_page_domain + content_string[index_of_ziploc:end_of_ziploc]
     except Exception:
         print('Failed to find downloadable zip file for addon. Skipping...\n')
-        return ''
+        raise
 
 
 def convert_old_curse_url(addonpage):
@@ -137,7 +137,7 @@ def convert_old_curse_url(addonpage):
         return page.url
     except Exception:
         print('Failed to find the current page for old URL "' + addonpage + '". Skipping...\n')
-        return ''
+        raise
 
 
 def get_curse_version(addonpage):
@@ -156,8 +156,8 @@ def get_curse_version(addonpage):
         end_tag = content_string.find('</h3>', index_of_ver)  # ending tag after the version string
         return content_string[index_of_ver:end_tag].strip()
     except Exception:
-        print('Failed to find version number for: ' + addonpage)
-        return ''
+        # print('Failed to find version number for: ' + addonpage)
+        raise Exception('Failed to find version number for: ' + addonpage)
 
 
 def get_curse_datastore_version(addonpage):
@@ -189,7 +189,7 @@ def curse_project(addonpage):
         return addonpage + '/files/latest'
     except Exception:
         print('Failed to find downloadable zip file for addon. Skipping...\n')
-        return ''
+        raise
 
 
 def get_curse_project_version(addonpage):
@@ -208,7 +208,7 @@ def get_curse_project_version(addonpage):
         return content_string[index_of_ver:end_tag].strip()
     except Exception:
         print('Failed to find version number for: ' + addonpage)
-        return ''
+        raise
 
 
 # WowAce Project
@@ -218,7 +218,7 @@ def wow_ace_project(addonpage):
         return addonpage + '/files/latest'
     except Exception:
         print('Failed to find downloadable zip file for addon. Skipping...\n')
-        return ''
+        raise
 
 
 def get_wow_ace_project_version(addonpage):
@@ -232,7 +232,7 @@ def get_wow_ace_project_version(addonpage):
         return content_string[index_of_ver:end_tag].strip()
     except Exception:
         print('Failed to find version number for: ' + addonpage)
-        return ''
+        raise
 
 
 # Tukui
@@ -242,7 +242,7 @@ def tukui(addonpage):
         return addonpage + '/-/archive/master/elvui-master.zip'
     except Exception:
         print('Failed to find downloadable zip file for addon. Skipping...\n')
-        return ''
+        raise
 
 
 def get_tukui_version(addonpage):
@@ -260,7 +260,7 @@ def get_tukui_version(addonpage):
     except Exception as err:
         print('Failed to find version number for: ' + addonpage)
         print(err)
-        return ''
+        raise
 
 
 # Wowinterface
@@ -276,7 +276,7 @@ def wowinterface(addonpage):
         return content_string[index_of_ziploc:end_quote]
     except Exception:
         print('Failed to find downloadable zip file for addon. Skipping...\n')
-        return ''
+        raise
 
 
 def get_wowinterface_version(addonpage):
@@ -289,4 +289,4 @@ def get_wowinterface_version(addonpage):
         return content_string[index_of_ver:end_tag].strip()
     except Exception:
         print('Failed to find version number for: ' + addonpage)
-        return ''
+        raise

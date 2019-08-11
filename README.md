@@ -1,4 +1,4 @@
-# wow-addon-updater - Now supports Tukui!
+# wow-addon-updater
 
 This utility provides an alternative to the Twitch/Curse client for management and updating of addons for World of Warcraft. The Twitch/Curse client is rather bloated and buggy, and comes with many features that most users will not ever use in the first place. This utility, however, is lightweight and makes it very easy to manage which addons are being updated, and to update them just by running a python script.
 
@@ -8,11 +8,11 @@ Changelog located in [`changelog.txt`](changelog.txt)
 
 This utility has two dependencies:
 
-* A version of [Python](https://www.python.org/) 3 (Any version of Python 3 should do)
+* A version of [Python](https://www.python.org/) 3.6+
 
 * The [requests](http://docs.python-requests.org/en/master/) module
 
-Thanks to https://github.com/Saritus, the requests module is now included in the download as a package, so there is no longer any need to install those yourself. Just install Python 3, download this app, configure the utility, and double click "WoWAddonUpdater.py" to start.
+Thanks to https://github.com/Saritus, the requests module is now included in the download as a package, so there is no longer any need to install those yourself. Just install Python 3.6+, download this app, configure the utility, and double click "WoWAddonUpdater.py" to start.
 
 ## Configuring the utility
 
@@ -46,7 +46,7 @@ because the downloadable zip from this website contains a subfolder called "ElvU
 
 ## macOS Installation Instructions - Thanks to https://github.com/melwan
 
-1. Install Python 3 for macOS
+1. Install Python 3.6+ for macOS
 2. Run get-pip.py (Run menu > Run Module)
 3. Run get-requests.py (Run menu > Run Module)
 4. Edit config.ini (using TextEdit.app)
@@ -60,8 +60,3 @@ The standard addon location on macOS is /Applications/World of Warcraft/Interfac
 ## Running the utility
 
 After configuring the utility and setting up your input file, updating your addons is as simple as double clicking the the appropriate runner utility for your platform, either [`run_Windows.bat`](run_Windows.bat) or [`run_MacLinux.sh`](run_MacLinux.sh)
-
-## Future plans
-
-
-Thanks for checking this out; hopefully it helps a lot of you :)
