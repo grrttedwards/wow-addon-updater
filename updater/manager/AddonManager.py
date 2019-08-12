@@ -28,7 +28,7 @@ def check_version():
             print(NEW_UPDATE_MESSAGE)
 
 
-class AddonUpdater:
+class AddonManager:
     UNAVAILABLE = 'Unavailable'
 
     def __init__(self):
@@ -85,10 +85,10 @@ class AddonUpdater:
             latest_version = SiteHandler.get_latest_version(addon_url)
         except Exception:
             print(f"Failed to retrieve latest version for {addon_name}.\n")
-            latest_version = AddonUpdater.UNAVAILABLE
+            latest_version = AddonManager.UNAVAILABLE
 
         installed_version = self.get_installed_version(addon_name)
-        if latest_version == AddonUpdater.UNAVAILABLE:
+        if latest_version == AddonManager.UNAVAILABLE:
             pass
         elif latest_version == installed_version:
             print(f"{addon_name} version {latest_version} is up to date.\n")
@@ -132,7 +132,7 @@ class AddonUpdater:
     def set_installed_versions(self):
         versions = {}
         for (addon_name, addon_url, _, new_version) in self.manifest:
-            if new_version != AddonUpdater.UNAVAILABLE:
+            if new_version != AddonManager.UNAVAILABLE:
                 versions[addon_name] = {"url": addon_url, "version": new_version}
 
         installed_versions = configparser.ConfigParser()
@@ -153,13 +153,3 @@ class AddonUpdater:
             for row in results:
                 print("".join(word.ljust(col_width) for word in row))
             confirm_exit()
-
-
-def main():
-    check_version()
-    AddonUpdater().update_all()
-
-
-if __name__ == "__main__":
-    # execute only if run as a script
-    main()

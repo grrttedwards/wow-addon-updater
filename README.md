@@ -21,7 +21,7 @@ pipenv install
 
 After performing the setup steps, `pipenv run` is used to execute the utility. To run from the command line, use:
 ```bash
-pipenv run updater/WoWAddonUpdater.py
+pipenv run python -m updater
 ```
 
 ## Configuring the utility
