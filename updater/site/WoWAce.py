@@ -4,14 +4,14 @@ from updater.site.AbstractSite import AbstractSite
 
 
 class WoWAce(AbstractSite):
-    URL = 'https://www.wowace.com/projects/'
+    _URL = 'https://www.wowace.com/projects/'
 
     def __init__(self, url: str):
         super().__init__(url)
 
     @classmethod
     def get_supported_urls(cls):
-        return [cls.URL]
+        return [cls._URL]
 
     def find_zip_url(self):
         return self.url + '/files/latest'

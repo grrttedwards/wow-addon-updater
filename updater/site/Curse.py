@@ -4,17 +4,17 @@ from updater.site.AbstractSite import AbstractSite
 
 
 class Curse(AbstractSite):
-    OLD_CURSE_URL = 'https://mods.curse.com/addons/wow/'
-    OLD_PROJECT_URL = 'https://wow.curseforge.com/projects/'
-    MAIN_URL = 'https://www.curseforge.com/wow/addons/'
+    _URL = 'https://www.curseforge.com/wow/addons/'
+    _OLD_URL = 'https://mods.curse.com/addons/wow/'
+    _OLD_PROJECT_URL = 'https://wow.curseforge.com/projects/'
 
     def __init__(self, url: str):
-        url = convert_old_curse_urls(url)
+        url = Curse._convert_old_curse_urls(url)
         super().__init__(url)
 
     @classmethod
     def get_supported_urls(cls):
-        return [cls.OLD_CURSE_URL, cls.OLD_PROJECT_URL, cls.MAIN_URL]
+        return [cls._OLD_URL, cls._OLD_PROJECT_URL, cls._URL]
 
     def find_zip_url(self):
         try:
@@ -42,17 +42,17 @@ class Curse(AbstractSite):
             # print('Failed to find version number for: ' + self.url)
             raise Exception('Failed to find version number for: ' + self.url)
 
-
-def convert_old_curse_urls(url: str):
-    if any(old_url in url for old_url in [Curse.OLD_CURSE_URL, Curse.OLD_PROJECT_URL]):
-        try:
-            # Some old URL's may point to nonexistent pages. Rather than guess at what the new
-            # name and URL is, just try to load the old URL and see where Curse redirects us to.
-            page = requests.get(url)
-            page.raise_for_status()
-            return page.url
-        except Exception:
-            print(f"Failed to find the current page for old URL [{url}]. Skipping...\n")
-            raise
-    else:
-        return url
+    @classmethod
+    def _convert_old_curse_urls(cls, url: str) -> str:
+        if any(old_url in url for old_url in [Curse._OLD_URL, Curse._OLD_PROJECT_URL]):
+            try:
+                # Some old URL's may point to nonexistent pages. Rather than guess at what the new
+                # name and URL is, just try to load the old URL and see where Curse redirects us to.
+                page = requests.get(url)
+                page.raise_for_status()
+                return page.url
+            except Exception:
+                print(f"Failed to find the current page for old URL [{url}]. Skipping...\n")
+                raise
+        else:
+            return url

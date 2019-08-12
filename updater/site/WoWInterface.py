@@ -4,14 +4,14 @@ from updater.site.AbstractSite import AbstractSite
 
 
 class WoWInterface(AbstractSite):
-    URL = 'https://www.wowinterface.com/downloads/'
+    _URL = 'https://www.wowinterface.com/downloads/'
 
     def __init__(self, url: str):
         super().__init__(url)
 
     @classmethod
     def get_supported_urls(cls) -> [str]:
-        return [cls.URL]
+        return [cls._URL]
 
     def find_zip_url(self):
         downloadpage = self.url.replace('info', 'download')

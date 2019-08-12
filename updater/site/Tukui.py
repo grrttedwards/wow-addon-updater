@@ -6,14 +6,14 @@ from updater.site.AbstractSite import AbstractSite
 
 
 class Tukui(AbstractSite):
-    URL = 'https://git.tukui.org'
+    _URL = 'https://git.tukui.org'
 
     def __init__(self, url: str):
         super().__init__(url)
 
     @classmethod
     def get_supported_urls(cls) -> [str]:
-        return [cls.URL]
+        return [cls._URL]
 
     def find_zip_url(self):
         return self.url + '/-/archive/master/elvui-master.zip'
