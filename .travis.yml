@@ -1,5 +1,8 @@
+if: type = pull_request
+
 git:
   quiet: true
+  depth: 3
 
 language: python
 python:
