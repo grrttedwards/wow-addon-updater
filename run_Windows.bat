@@ -1,1 +1,2 @@
-python WoWAddonUpdater.py
+pipenv run python -m updater
+PAUSE
