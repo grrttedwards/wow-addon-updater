@@ -9,51 +9,35 @@ from requests import HTTPError
 
 from updater.site import SiteHandler
 
-CHANGELOG_URL = 'https://raw.githubusercontent.com/grrttedwards/wow-addon-updater/master/changelog.txt'
-CHANGELOG_FILE = 'changelog.txt'
-NEW_UPDATE_MESSAGE = 'A new update is available! Check it out at https://github.com/grrttedwards/wow-addon-updater !'
 
-
-def confirm_exit():
-    input('\nPress the Enter key to exit')
-    exit(0)
-
-
-def check_version():
-    if isfile(CHANGELOG_FILE):
-        downloaded_changelog = requests.get(CHANGELOG_URL).text
-        with open(CHANGELOG_FILE, mode='r') as f:
-            current_changelog = f.read()
-        if downloaded_changelog != current_changelog:
-            print(NEW_UPDATE_MESSAGE)
+def error(message: str):
+    print(message)
+    exit(1)
 
 
 class AddonManager:
-    UNAVAILABLE = 'Unavailable'
+    _UNAVAILABLE = 'Unavailable'
+    _CONFIG_FILE = 'config.ini'
 
     def __init__(self):
         self.manifest = []
 
         # Read config file
-        if not isfile('config.ini'):
-            print("Failed to read configuration file. Are you sure there is a file called 'config.ini'?")
-            confirm_exit()
+        if not isfile(AddonManager._CONFIG_FILE):
+            error(f"Failed to read config file. Are you sure there is a file called {AddonManager._CONFIG_FILE}?")
 
         config = configparser.ConfigParser()
-        config.read('config.ini')
+        config.read(AddonManager._CONFIG_FILE)
 
         try:
             self.WOW_ADDON_LOCATION = config['WOW ADDON UPDATER']['WoW Addon Location']
             self.ADDON_LIST_FILE = config['WOW ADDON UPDATER']['Addon List File']
             self.INSTALLED_VERS_FILE = config['WOW ADDON UPDATER']['Installed Versions File']
-            self.AUTO_CLOSE = config['WOW ADDON UPDATER']['Close Automatically When Completed']
         except Exception:
-            print("Failed to parse configuration file. Are you sure it is formatted correctly?")
-            confirm_exit()
+            error("Failed to parse configuration file. Are you sure it is formatted correctly?")
 
         if not isfile(self.ADDON_LIST_FILE):
-            print("Failed to read addon list file. Are you sure the file exists?")
-            confirm_exit()
+            error(f"Failed to read addon list file ({self.ADDON_LIST_FILE}). Are you sure the file exists?")
 
     def update_all(self):
         threads = []
@@ -70,7 +54,6 @@ class AddonManager:
             thread.join()
 
         self.set_installed_versions()
-
         self.display_results()
 
     def update_addon(self, addon_entry):
@@ -85,10 +68,10 @@ class AddonManager:
             latest_version = SiteHandler.get_latest_version(addon_url)
         except Exception:
             print(f"Failed to retrieve latest version for {addon_name}.\n")
-            latest_version = AddonManager.UNAVAILABLE
+            latest_version = AddonManager._UNAVAILABLE
 
         installed_version = self.get_installed_version(addon_name)
-        if latest_version == AddonManager.UNAVAILABLE:
+        if latest_version == AddonManager._UNAVAILABLE:
             pass
         elif latest_version == installed_version:
             print(f"{addon_name} version {latest_version} is up to date.\n")
@@ -132,7 +115,7 @@ class AddonManager:
     def set_installed_versions(self):
         versions = {}
         for (addon_name, addon_url, _, new_version) in self.manifest:
-            if new_version != AddonManager.UNAVAILABLE:
+            if new_version != AddonManager._UNAVAILABLE:
                 versions[addon_name] = {"url": addon_url, "version": new_version}
 
         installed_versions = configparser.ConfigParser()
@@ -141,15 +124,13 @@ class AddonManager:
             installed_versions.write(installed_versions_file)
 
     def display_results(self):
-        if self.AUTO_CLOSE == 'False':
-            headers = [["Name", "Prev. Version", "New Version"],
-                       ["-" * 4, "-" * 13, "-" * 11]]
-            table = [[name,
-                      "Not found" if prev is None else prev,
-                      "Up to date" if new == prev else new]
-                     for name, _, prev, new in self.manifest]  # eliminate the URL
-            results = headers + table
-            col_width = max(len(word) for row in results for word in row) + 2  # padding
-            for row in results:
-                print("".join(word.ljust(col_width) for word in row))
-            confirm_exit()
+        headers = [["Name", "Prev. Version", "New Version"],
+                   ["-" * 4, "-" * 13, "-" * 11]]
+        table = [[name,
+                  "Not found" if prev is None else prev,
+                  "Up to date" if new == prev else new]
+                 for name, _, prev, new in self.manifest]  # eliminate the URL
+        results = headers + table
+        col_width = max(len(word) for row in results for word in row) + 2  # padding
+        for row in results:
+            print("".join(word.ljust(col_width) for word in row))
