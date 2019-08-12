@@ -28,15 +28,13 @@ pipenv run python -m updater
 
 The `config.ini` file is used by the utility to find where to install the addons to, and where to get the list of mods from.
 
-The default location in Windows to install the addons to is `C:\Program Files (x86)\World of Warcraft\_retail_\Interface\AddOns`. If this is not the location where you have World of Warcraft installed, you will need to edit "config.ini" to point to your addons folder.
+The default location in Windows to install the addons to is `C:\Program Files (x86)\World of Warcraft\_retail_\Interface\AddOns`. If this is not the location where you have World of Warcraft installed, you will need to edit `config.ini` to point to your addons folder.
 
 The standard addon location on macOS is `/Applications/World of Warcraft/Interface/AddOns`
 
-The default location of the addon list file is simply `in.txt`, but this file will not exist on your PC, so you should either create "in.txt" in the same location as the utility, or name the file something else and edit "config.ini" to point to the new file.
+The default name of the addon list file is `addons.txt`, but this file will not exist on your PC, so you should either create `addons.txt` in the same location as the utility, or name the file something else and edit "config.ini" to point to the new file.
 
-The `config.ini` file also has two other properties that you may not need to change. `Installed Versions File` determines where to store the file that keeps track of the current versions of your addons, and I don't recommend changing that.
-
-The `Close Automatically When Completed` property determines whether the window automatically closes when the process completes (both successfully and unsuccessfully). It defaults to "False" so that you can see if any errors occurred. If you run this utility as a scheduled job (e.g. upon startup, every x hours, etc), we recommend changing this to "True".
+The `Installed Versions File` property determines where to store the file that keeps track of the current versions of your addons.
 
 ## Input file format
 
