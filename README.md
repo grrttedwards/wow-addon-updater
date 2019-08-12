@@ -81,4 +81,4 @@ pipenv run coverage report
 1. Profit
 
 ## Thanks
-Shout out to GitHub user [`kuhnertdm`](https://github.com/kuhnertdm) for establishing the base of this utility, and giving people an alternative to the wasteland of mainstream clients.
+Shout out to GitHub user [`kuhnertdm`](https://github.com/kuhnertdm) for establishing the original base of this utility, and giving people an alternative to the wasteland of mainstream clients.
