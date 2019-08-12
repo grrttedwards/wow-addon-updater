@@ -3,6 +3,7 @@ import unittest
 from updater.site import Curse
 
 
+@unittest.SkipTest
 class TestCurse(unittest.TestCase):
     def setUp(self):
         self.curse = Curse.Curse("")
