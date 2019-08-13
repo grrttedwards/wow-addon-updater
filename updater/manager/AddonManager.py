@@ -1,3 +1,6 @@
+import sys
+import subprocess
+import platform
 import configparser
 import threading
 import zipfile
@@ -8,6 +11,11 @@ import requests
 from requests import HTTPError
 
 from updater.site import SiteHandler
+
+def format_path(path: str):
+    if sys.platform != 'linux' or 'Microsoft' not in platform.uname()[3]:
+        return path
+    return subprocess.check_output(['wslpath', path], text=True)
 
 
 def error(message: str):
@@ -30,7 +38,7 @@ class AddonManager:
         config.read(AddonManager._CONFIG_FILE)
 
         try:
-            self.WOW_ADDON_LOCATION = config['WOW ADDON UPDATER']['WoW Addon Location']
+            self.WOW_ADDON_LOCATION = format_path(config['WOW ADDON UPDATER']['WoW Addon Location'])
             self.ADDON_LIST_FILE = config['WOW ADDON UPDATER']['Addon List File']
             self.INSTALLED_VERS_FILE = config['WOW ADDON UPDATER']['Installed Versions File']
         except Exception:
