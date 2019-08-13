@@ -10,6 +10,7 @@ class TestWowAce(unittest.TestCase):
 
     def test_integration_wowace_find_zip_url(self):
         zip_url = self.wowace.find_zip_url()
+        # example: https://www.wowace.com/projects/bartender4/files/latest
         self.assertEqual(zip_url, f"{self.url}/files/latest")
 
     def test_integration_wowace_get_addon_name(self):

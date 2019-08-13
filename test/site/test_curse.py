@@ -10,7 +10,8 @@ class TestCurse(unittest.TestCase):
 
     def test_integration_curse_find_zip_url(self):
         zip_url = self.curse.find_zip_url()
-        self.assertRegex(zip_url, rf"{self.url}/download/[\d]+/file")
+        # example: https://www.curseforge.com/wow/addons/bartender4/download/2730531/file
+        self.assertRegex(zip_url, rf"{self.url}/download/[0-9]+/file")
 
     def test_integration_curse_get_addon_name(self):
         addon_name = self.curse.get_addon_name()
@@ -18,7 +19,8 @@ class TestCurse(unittest.TestCase):
 
     def test_integration_curse_get_latest_version(self):
         latest_version = self.curse.get_latest_version()
-        self.assertRegex(latest_version, r"[\d]+\.[\d]+\.[\d]+")  # something like 4.5.6
+        # something like 4.5.6
+        self.assertRegex(latest_version, r"[0-9]+\.[0-9]+\.[0-9]+")
 
     def test_curse_get_supported_urls(self):
         supported_urls = self.curse.get_supported_urls()
