@@ -5,7 +5,7 @@ from updater.site import Curse
 
 class TestCurse(unittest.TestCase):
     def setUp(self):
-        self.url = "https://www.curseforge.com/wow/addons/bartender4"
+        self.url = 'https://www.curseforge.com/wow/addons/bartender4'
         self.curse = Curse.Curse(self.url)
 
     def test_integration_curse_find_zip_url(self):
@@ -14,7 +14,7 @@ class TestCurse(unittest.TestCase):
 
     def test_integration_curse_get_addon_name(self):
         addon_name = self.curse.get_addon_name()
-        self.assertEqual(addon_name, "bartender4")
+        self.assertEqual(addon_name, 'bartender4')
 
     def test_integration_curse_get_latest_version(self):
         latest_version = self.curse.get_latest_version()
