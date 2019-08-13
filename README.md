@@ -2,7 +2,7 @@
 
 This utility provides an alternative to the Twitch/Curse client for management and updating of addons for World of Warcraft. The Twitch/Curse client is rather bloated and buggy, and comes with many features that most users will not ever use in the first place. This utility, however, is lightweight and makes it very easy to manage which addons are being updated, and to update them just by running a python script.
 
-[![Build Status](https://travis-ci.org/graphql-java/graphql-java.svg?branch=master)](https://travis-ci.org/graphql-java/graphql-java)
+[![Build Status](https://travis-ci.com/grrttedwards/wow-addon-updater.svg?branch=master)](https://travis-ci.com/grrttedwards/wow-addon-updater)
 
 ## First-time setup
 
