@@ -3,30 +3,27 @@ import unittest
 from updater.site import Curse
 
 
-@unittest.SkipTest
 class TestCurse(unittest.TestCase):
     def setUp(self):
-        self.curse = Curse.Curse("")
+        self.url = "https://www.curseforge.com/wow/addons/bartender4"
+        self.curse = Curse.Curse(self.url)
 
-    # todo
     def test_integration_curse_find_zip_url(self):
-        # self.curse.find_zip_url()
-        self.assertTrue(False)
+        zip_url = self.curse.find_zip_url()
+        self.assertRegex(zip_url, rf"{self.url}/download/[\d]+/file")
 
-    # todo
     def test_integration_curse_get_addon_name(self):
-        # self.curse.get_addon_name()
-        self.assertTrue(False)
+        addon_name = self.curse.get_addon_name()
+        self.assertEqual(addon_name, "bartender4")
 
-    # todo
     def test_integration_curse_get_latest_version(self):
-        # self.curse.get_latest_version()
-        self.assertTrue(False)
+        latest_version = self.curse.get_latest_version()
+        self.assertRegex(latest_version, r"[\d]+\.[\d]+\.[\d]+")  # something like 4.5.6
 
-    # todo
-    def test_integration_curse_get_supported_urls(self):
-        # self.curse.get_supported_urls()
-        self.assertTrue(False)
+    def test_curse_get_supported_urls(self):
+        supported_urls = self.curse.get_supported_urls()
+        self.assertIsNotNone(supported_urls)
+        self.assertTrue(len(supported_urls) != 0)
 
 
 if __name__ == '__main__':
