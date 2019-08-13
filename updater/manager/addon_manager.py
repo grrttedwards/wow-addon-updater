@@ -7,7 +7,7 @@ from os.path import isfile, join
 import requests
 from requests import HTTPError
 
-from updater.site import SiteHandler
+from updater.site import site_handler
 
 
 def error(message: str):
@@ -63,9 +63,9 @@ class AddonManager:
         # Expected format: "mydomain.com/myzip.zip" or "mydomain.com/myzip.zip|subfolder"
         addon_url, *_ = addon_entry.split('|')
 
-        addon_name = SiteHandler.get_addon_name(addon_entry)
+        addon_name = site_handler.get_addon_name(addon_entry)
         try:
-            latest_version = SiteHandler.get_latest_version(addon_url)
+            latest_version = site_handler.get_latest_version(addon_url)
         except Exception:
             print(f"Failed to retrieve latest version for {addon_name}.\n")
             latest_version = AddonManager._UNAVAILABLE
@@ -79,7 +79,7 @@ class AddonManager:
             print(f"Installing/updating addon: {addon_name} to version: {latest_version}...\n")
 
             try:
-                zip_url = SiteHandler.find_zip_url(addon_url)
+                zip_url = site_handler.find_zip_url(addon_url)
                 _, *subfolder = addon_name.split('|')
                 addon_zip = self.get_addon_zip(zip_url)
                 self.extract_to_addons(addon_zip, subfolder)

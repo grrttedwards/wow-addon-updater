@@ -2,7 +2,7 @@ import re
 
 import requests
 
-from updater.site.AbstractSite import AbstractSite
+from updater.site.abstract_site import AbstractSite
 
 
 class Tukui(AbstractSite):

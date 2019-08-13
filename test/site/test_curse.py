@@ -1,12 +1,12 @@
 import unittest
 
-from updater.site import Curse
+from updater.site import curse
 
 
 class TestCurse(unittest.TestCase):
     def setUp(self):
         self.url = 'https://www.curseforge.com/wow/addons/bartender4'
-        self.curse = Curse.Curse(self.url)
+        self.curse = curse.Curse(self.url)
 
     def test_integration_curse_find_zip_url(self):
         zip_url = self.curse.find_zip_url()
