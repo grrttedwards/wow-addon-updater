@@ -1,5 +1,16 @@
 if: (type = push AND branch IN (master, dev)) OR (type = pull_request AND NOT branch =~ /no-ci/)
 
+env:
+  global:
+    - PIPENV_IGNORE_VIRTUALENVS=1
+    - WORKON_HOME=/home/travis/.pipenv/venvs
+    - PIP_CACHE_DIR=/home/travis/.pipenv/pipcache
+
+cache:
+  directories:
+   - /home/travis/.pipenv/venvs
+   - /home/travis/.pipenv/pipcache
+
 git:
   quiet: true
 
