@@ -12,10 +12,10 @@ from requests import HTTPError
 
 from updater.site import SiteHandler
 
-def format_path(path: str):
-    if sys.platform != 'linux' or 'Microsoft' not in platform.uname()[3]:
-        return path
-    return subprocess.check_output(['wslpath', path], text=True)
+def format_path(path: str) -> str:
+    if sys.platform == 'linux' and 'Microsoft' in platform.version():
+        return subprocess.check_output(['wslpath', path], text=True)
+    return path
 
 
 def error(message: str):
