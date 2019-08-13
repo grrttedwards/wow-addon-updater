@@ -6,7 +6,7 @@ from updater.site.AbstractSite import AbstractSite
 
 
 class Tukui(AbstractSite):
-    _URL = 'https://git.tukui.org'
+    _URL = 'https://git.tukui.org/elvui/'
 
     def __init__(self, url: str):
         super().__init__(url)
@@ -24,7 +24,7 @@ class Tukui(AbstractSite):
             response.raise_for_status()
             content = str(response.content)
             match = re.search(
-                r'<div class="commit-sha-group">\\n<div class="label label-monospace">\\n(?P<hash>[^<]+?)\\n</div>',
+                r'data-title="Copy commit SHA to clipboard".*data-clipboard-text="(?P<hash>[a-f0-9]{40}?)"',
                 content)
             result = ''
             if match:
