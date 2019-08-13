@@ -1,3 +1,5 @@
+import re
+
 import requests
 
 from updater.site.AbstractSite import AbstractSite
@@ -37,3 +39,8 @@ class WoWInterface(AbstractSite):
         except Exception:
             print('Failed to find version number for: ' + self.url)
             raise
+
+    def get_addon_name(self):
+        addon_name = AbstractSite.get_addon_name(self)
+        addon_name = re.search(r"info[0-9]+-(?P<name>[a-zA-z0-9]+)\.html", addon_name).group('name')
+        return addon_name
