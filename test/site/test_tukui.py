@@ -1,12 +1,12 @@
 import unittest
 
-from updater.site import Tukui
+from updater.site import tukui
 
 
 class TestTukui(unittest.TestCase):
     def setUp(self):
         self.url = 'https://git.tukui.org/elvui/elvui'
-        self.tukui = Tukui.Tukui(self.url)
+        self.tukui = tukui.Tukui(self.url)
 
     def test_integration_tukui_find_zip_url(self):
         zip_url = self.tukui.find_zip_url()

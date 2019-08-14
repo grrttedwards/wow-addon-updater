@@ -1,12 +1,12 @@
 import unittest
 
-from updater.site import WoWAce
+from updater.site import wowace
 
 
 class TestWowAce(unittest.TestCase):
     def setUp(self):
         self.url = 'https://www.wowace.com/projects/bartender4'
-        self.wowace = WoWAce.WoWAce(self.url)
+        self.wowace = wowace.WoWAce(self.url)
 
     def test_integration_wowace_find_zip_url(self):
         zip_url = self.wowace.find_zip_url()

@@ -2,7 +2,7 @@ from os.path import isfile
 
 import requests
 
-from updater.manager.AddonManager import AddonManager
+from updater.manager.addon_manager import AddonManager
 
 CHANGELOG_URL = 'https://raw.githubusercontent.com/grrttedwards/wow-addon-updater/master/changelog.txt'
 CHANGELOG_FILE = 'changelog.txt'
