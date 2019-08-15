@@ -3,7 +3,6 @@ from unittest.mock import patch, Mock
 
 from updater.manager import addon_manager
 from updater.manager.addon_manager import AddonManager
-from updater.site import site_handler
 from updater.site.abstract_site import AbstractSite
 
 
@@ -29,12 +28,15 @@ EXP_MANIFEST = [[EXP_NAME, TEST_URL, EXP_INST_VERSION, EXP_LATEST_VERSION]]
 
 class TestAddonManager(unittest.TestCase):
     def setUp(self):
+        self.mock_site = MockSite(TEST_URL)
+        patcher = patch('updater.manager.addon_manager.site_handler.get_handler')
+        patcher.start().return_value = MockSite(TEST_URL)
         with patch.object(addon_manager.AddonManager, "__init__", lambda x: None):
             self.manager = addon_manager.AddonManager()
         self.manager.manifest = []
         self.manager.get_installed_version = Mock(return_value=EXP_INST_VERSION)
-        self.mocked_site = MockSite(TEST_URL)
-        site_handler.get_handler = Mock(return_value=self.mocked_site)
+
+        self.addCleanup(patcher.stop)
 
     def test_download_fail_doesnt_install_addon(self):
         self.manager.get_addon_zip = Mock(side_effect=Exception())
@@ -42,12 +44,12 @@ class TestAddonManager(unittest.TestCase):
         self.assertFailedInstall()
 
     def test_find_download_url_fail_doesnt_install_addon(self):
-        self.mocked_site.find_zip_url = Mock(side_effect=Exception())
+        self.mock_site.find_zip_url = Mock(side_effect=Exception())
         self.manager.update_addon(TEST_URL)
         self.assertFailedInstall()
 
     def test_get_latest_version_fail_doesnt_install_addon(self):
-        self.mocked_site.get_latest_version = Mock(side_effect=Exception())
+        self.mock_site.get_latest_version = Mock(side_effect=Exception())
         self.manager.update_addon(TEST_URL)
         self.assertFailedInstall()
 
