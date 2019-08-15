@@ -9,7 +9,7 @@ class Github(AbstractSite):
 
     def __init__(self, url: str):
         if '/tree/master' not in url:
-            url = (url + '/tree/master').replace('//', '/')
+            url = (url + '/tree/master')
         super().__init__(url)
 
     @classmethod
@@ -21,16 +21,14 @@ class Github(AbstractSite):
 
     def get_latest_version(self):
         try:
+            print(self.url)
             response = requests.get(self.url)
             response.raise_for_status()
             content = str(response.content)
-            match = re.search(
+            version = re.search(
                 r'<a data-pjax.*?\/commit\/(?P<hash>.*?)">',
-                content)
-            result = ''
-            if match:
-                result = match.group('hash')[-8:] #Just use the last 8 chars of the hash, same as Tukui.
-            return result.strip()
+                content).group('hash')
+            return version.strip()
         except Exception:
             print(f"Failed to find version number for: {self.url}")
             raise
