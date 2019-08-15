@@ -20,7 +20,7 @@ class TestWowAce(unittest.TestCase):
     def test_integration_wowace_get_latest_version(self):
         latest_version = self.wowace.get_latest_version()
         # something like 4.5.6-1-g1234567
-        self.assertRegex(latest_version, r"[0-9]+\.[0-9]+\.[0-9]+-[0-9]+-g[0-9a-z]{7}")
+        self.assertRegex(latest_version, r"[0-9]+\.[0-9]+\.[0-9]+")
 
     def test_wowace_get_supported_urls(self):
         supported_urls = self.wowace.get_supported_urls()

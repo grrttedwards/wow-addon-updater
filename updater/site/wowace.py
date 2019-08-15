@@ -1,3 +1,5 @@
+import re
+
 import requests
 
 from updater.site.abstract_site import AbstractSite
@@ -21,10 +23,11 @@ class WoWAce(AbstractSite):
             page = requests.get(self.url + '/files')
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
-            start_of_table = content_string.find('project-file-list-item')
-            index_of_ver = content_string.find('data-name="', start_of_table) + 11  # first char of the version string
-            end_tag = content_string.find('">', index_of_ver)  # ending tag after the version string
-            return content_string[index_of_ver:end_tag].strip()
+            # the first one encountered will be the WoW retail version
+            version = re.search(
+                r"project-file-name-container.+?data-id=.+?data-name=\"(?P<version>.+?)\"",
+                content_string).group('version')
+            return version
         except Exception:
             print(f"Failed to find version number for: {self.url}")
             raise
