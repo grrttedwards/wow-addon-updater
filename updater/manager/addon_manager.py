@@ -61,11 +61,13 @@ class AddonManager:
             return
 
         # Expected format: "mydomain.com/myzip.zip" or "mydomain.com/myzip.zip|subfolder"
-        addon_url, *_ = addon_entry.split('|')
+        addon_url, *subfolder = addon_entry.split('|')
 
-        addon_name = site_handler.get_addon_name(addon_entry)
+        site = site_handler.get_handler(addon_url)
+
+        addon_name = site.get_addon_name()
         try:
-            latest_version = site_handler.get_latest_version(addon_url)
+            latest_version = site.get_latest_version()
         except Exception:
             print(f"Failed to retrieve latest version for {addon_name}.\n")
             latest_version = AddonManager._UNAVAILABLE
@@ -79,8 +81,7 @@ class AddonManager:
             print(f"Installing/updating addon: {addon_name} to version: {latest_version}...\n")
 
             try:
-                zip_url = site_handler.find_zip_url(addon_url)
-                _, *subfolder = addon_name.split('|')
+                zip_url = site.find_zip_url()
                 addon_zip = self.get_addon_zip(zip_url)
                 self.extract_to_addons(addon_zip, subfolder)
             except HTTPError:
