@@ -3,10 +3,10 @@ import unittest
 from updater.site import curse
 
 version_test_data = [
-    ['https://www.curseforge.com/wow/addons/bartender4', 'bartender4', r"[0-9]+\.[0-9]+\.[0-9]+"],
-    ['https://www.curseforge.com/wow/addons/big-wigs', 'big-wigs', r"v[0-9]+"],
-    ['https://www.curseforge.com/wow/addons/deadly-boss-mods', 'deadly-boss-mods', r"[0-9]+\.[0-9]+\.[0-9]+"],
-    ['https://www.curseforge.com/wow/addons/weakauras-2', 'weakauras-2', r"[0-9]+\.[0-9]+\.[0-9]+"]
+    ['https://www.curseforge.com/wow/addons/bartender4', r"[0-9]+\.[0-9]+\.[0-9]+"],
+    ['https://www.curseforge.com/wow/addons/big-wigs', r"v[0-9]+"],
+    ['https://www.curseforge.com/wow/addons/deadly-boss-mods', r"[0-9]+\.[0-9]+\.[0-9]+"],
+    ['https://www.curseforge.com/wow/addons/weakauras-2', r"[0-9]+\.[0-9]+\.[0-9]+"]
 ]
 
 
@@ -25,11 +25,10 @@ class TestCurse(unittest.TestCase):
         self.assertEqual(addon_name, 'bartender4')
 
     def test_integration_curse_get_latest_version(self):
-        for data in version_test_data:
-            url, name, version_regex = data
+        for url, version_regex in version_test_data:
             thiscurse = curse.Curse(url)
             latest_version = thiscurse.get_latest_version()
-            with self.subTest(data):
+            with self.subTest([url, version_regex]):
                 # something like 4.5.6, or v163
                 self.assertRegex(latest_version, version_regex)
 
