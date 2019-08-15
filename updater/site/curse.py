@@ -1,3 +1,5 @@
+import re
+
 import requests
 
 from updater.site.abstract_site import AbstractSite
@@ -31,13 +33,13 @@ class Curse(AbstractSite):
 
     def get_latest_version(self):
         try:
-            page = requests.get(self.url + '/files')
+            page = requests.get(self.url)
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
-            index_of_ver = content_string.find(
-                '<h3 class="text-primary-500 text-lg">') + 37  # first char of the version string
-            end_tag = content_string.find('</h3>', index_of_ver)  # ending tag after the version string
-            return content_string[index_of_ver:end_tag].strip()
+            # the first one encountered will be the WoW retail version
+            version = re.search(r"data-id=.+?data-name=\"(?P<version>.+?)\"",
+                                content_string).group('version')
+            return version
         except Exception:
             # print('Failed to find version number for: ' + self.url)
             raise Exception('Failed to find version number for: ' + self.url)
