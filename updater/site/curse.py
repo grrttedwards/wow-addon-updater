@@ -37,8 +37,9 @@ class Curse(AbstractSite):
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
             # the first one encountered will be the WoW retail version
-            version = re.search(r"data-id=.+?data-name=\"(?P<version>.+?)\"",
-                                content_string).group('version')
+            version = re.search(
+                r"cf-recentfiles.+?data-id=.+?data-name=\"(?P<version>.+?)\"",
+                content_string).group('version')
             return version
         except Exception:
             # print('Failed to find version number for: ' + self.url)
