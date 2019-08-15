@@ -23,7 +23,7 @@ class Github(AbstractSite):
             response.raise_for_status()
             content = str(response.content)
             match = re.search(
-                r'<a data-pjax.*?\/commit\/(?P<hash>.*?)">parse download link',
+                r'<a data-pjax.*?\/commit\/(?P<hash>.*?)">',
                 content)
             result = ''
             if match:
