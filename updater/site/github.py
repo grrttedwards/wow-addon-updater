@@ -8,6 +8,8 @@ class Github(AbstractSite):
     _URL = 'https://github.com/'
 
     def __init__(self, url: str):
+        if '/tree/master' not in url:
+            url = (url + '/tree/master').replace('//', '/')
         super().__init__(url)
 
     @classmethod
