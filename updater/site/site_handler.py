@@ -3,6 +3,7 @@ from updater.site.curse import Curse
 from updater.site.tukui import Tukui
 from updater.site.wowace import WoWAce
 from updater.site.wowinterface import WoWInterface
+from updater.site.github import Github
 
 
 class UnknownSiteError(RuntimeError):
@@ -18,6 +19,8 @@ def get_handler(url: str) -> AbstractSite:
         return Tukui(url)
     elif WoWInterface.handles(url):
         return WoWInterface(url)
+    elif Github.handles(url):
+        return Github(url)
 
     # for subclass in Site.__subclasses__():
     #     if subclass.handles(url):
