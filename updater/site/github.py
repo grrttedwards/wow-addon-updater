@@ -1,6 +1,6 @@
 import requests
 import re
-import random
+
 from updater.site.abstract_site import AbstractSite
 
 
@@ -21,14 +21,13 @@ class Github(AbstractSite):
 
     def get_latest_version(self):
         try:
-            print(self.url)
             response = requests.get(self.url)
             response.raise_for_status()
             content = str(response.content)
             version = re.search(
                 r'<a data-pjax.*?\/commit\/(?P<hash>.*?)">',
                 content).group('hash')
-            return version.strip()
+            return version
         except Exception:
             print(f"Failed to find version number for: {self.url}")
             raise
