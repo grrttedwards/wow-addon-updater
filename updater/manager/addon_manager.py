@@ -76,7 +76,7 @@ class AddonManager:
         if latest_version == AddonManager._UNAVAILABLE:
             pass
         elif latest_version == installed_version:
-            print(f"{addon_name} version {latest_version} is up to date.\n")
+            print(f"{addon_name} version {installed_version} is up to date.\n")
         else:
             print(f"Installing/updating addon: {addon_name} to version: {latest_version}...\n")
 
@@ -86,8 +86,13 @@ class AddonManager:
                 self.extract_to_addons(addon_zip, subfolder)
             except HTTPError:
                 print(f"Failed to download zip for [{addon_name}]")
+                latest_version = AddonManager._UNAVAILABLE
             except KeyError:
                 print(f"Failed to find subfolder [{subfolder}] in archive for [{addon_name}]")
+                latest_version = AddonManager._UNAVAILABLE
+            except Exception:
+                print(f"Unexpected error unzipping [{addon_name}]")
+                latest_version = AddonManager._UNAVAILABLE
 
         addon_entry = [addon_name, addon_url, installed_version, latest_version]
         self.manifest.append(addon_entry)
