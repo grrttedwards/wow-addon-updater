@@ -1,6 +1,10 @@
+import os
+import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch, Mock
 
+from test import testutils
 from updater.manager import addon_manager
 from updater.manager.addon_manager import AddonManager
 from updater.site.abstract_site import AbstractSite
@@ -38,6 +42,10 @@ class TestAddonManager(unittest.TestCase):
 
         self.addCleanup(patcher.stop)
 
+    def assertFailedInstall(self):
+        self.assertListEqual([[EXP_NAME, TEST_URL, EXP_INST_VERSION, EXP_LATEST_VERSION]],
+                             self.manager.manifest)
+
     def test_download_fail_doesnt_install_addon(self):
         self.manager.get_addon_zip = Mock(side_effect=Exception())
         self.manager.update_addon(TEST_URL)
@@ -53,9 +61,24 @@ class TestAddonManager(unittest.TestCase):
         self.manager.update_addon(TEST_URL)
         self.assertFailedInstall()
 
-    def assertFailedInstall(self):
-        self.assertListEqual([[EXP_NAME, TEST_URL, EXP_INST_VERSION, EXP_LATEST_VERSION]],
-                             self.manager.manifest)
+    def test_extract_archive_subfolder(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            self.manager.WOW_ADDON_LOCATION = temp_dir
+            mock_zipfile = zipfile.ZipFile(testutils.get_file('some-fake-addon.zip'))
+            self.manager.extract_to_addons(mock_zipfile, "sub-folder")
+
+            self.assertTrue(os.path.isdir(os.path.join(temp_dir, 'sub-folder')))
+            self.assertTrue(os.path.isfile(os.path.join(temp_dir, 'sub-folder', 'file1.txt')))
+
+    def test_extract_entire_archive(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            self.manager.WOW_ADDON_LOCATION = temp_dir
+            mock_zipfile = zipfile.ZipFile(testutils.get_file('some-fake-addon.zip'))
+            self.manager.extract_to_addons(mock_zipfile, None)
+
+            self.assertTrue(os.path.isdir(os.path.join(temp_dir, 'some-fake-addon')))
+            self.assertTrue(os.path.isdir(os.path.join(temp_dir, 'some-fake-addon', 'sub-folder')))
+            self.assertTrue(os.path.isfile(os.path.join(temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')))
 
 
 if __name__ == '__main__':

@@ -1,8 +1,10 @@
 import configparser
+import shutil
+import tempfile
 import threading
 import zipfile
 from io import BytesIO
-from os.path import isfile, join
+from os.path import isfile, isdir, join
 
 import requests
 from requests import HTTPError
@@ -60,12 +62,17 @@ class AddonManager:
         if not addon_entry or addon_entry.startswith('#'):
             return
 
-        # Expected format: "mydomain.com/myzip.zip" or "mydomain.com/myzip.zip|subfolder"
+        # Expected format: "mydomain.com/myaddonurl" or "mydomain.com/myaddonurl|subfolder"
         addon_url, *subfolder = addon_entry.split('|')
 
         site = site_handler.get_handler(addon_url)
 
         addon_name = site.get_addon_name()
+
+        if subfolder:
+            [subfolder] = subfolder
+            addon_name = f"{addon_name}|{subfolder}"
+
         try:
             latest_version = site.get_latest_version()
         except Exception:
@@ -104,9 +111,13 @@ class AddonManager:
 
     def extract_to_addons(self, zipped: zipfile.ZipFile, subfolder):
         if subfolder:
-            [subfolder] = subfolder
+            top_level_folder, *_ = zipped.namelist()
             destination_dir = join(self.WOW_ADDON_LOCATION, subfolder)
-            zipped.extract(member=subfolder + '/', path=destination_dir)
+            with tempfile.TemporaryDirectory() as temp_dir:
+                zipped.extractall(path=temp_dir)
+                if isdir(destination_dir):
+                    shutil.rmtree(destination_dir)
+                shutil.copytree(src=join(temp_dir, top_level_folder, subfolder), dst=destination_dir)
         else:
             zipped.extractall(self.WOW_ADDON_LOCATION)
 
