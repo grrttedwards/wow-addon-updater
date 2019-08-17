@@ -142,12 +142,13 @@ class AddonManager:
 
     def display_results(self):
         headers = [["Name", "Prev. Version", "New Version"],
-                   ["-" * 4, "-" * 13, "-" * 11]]
+                   ["─" * 4, "─" * 13, "─" * 11]]
         table = [[name,
-                  "Not found" if prev is None else prev,
+                  "-----" if prev is None else prev,
                   "Up to date" if new == prev else new]
                  for name, _, prev, new in self.manifest]  # eliminate the URL
         results = headers + table
         col_width = max(len(word) for row in results for word in row) + 2  # padding
+        print()
         for row in results:
             print("".join(word.ljust(col_width) for word in row))
