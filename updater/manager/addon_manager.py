@@ -131,7 +131,7 @@ class AddonManager:
 
     def set_installed_versions(self):
         versions = {}
-        for (addon_name, addon_url, _, new_version) in self.manifest:
+        for (addon_name, addon_url, _, new_version) in sorted(self.manifest):
             if new_version != AddonManager._UNAVAILABLE:
                 versions[addon_name] = {"url": addon_url, "version": new_version}
 
