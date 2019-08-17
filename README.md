@@ -28,7 +28,7 @@ pipenv run python -m updater
 
 ## Configuring the utility
 
-The `config.ini` file is used by the utility to find where to install the addons to, and where to get the list of mods from.
+The `config.ini` file is used by the utility to find where to install the addons to, and where to get the list of addons from.
 
 The default location in Windows to install the addons to is `C:\Program Files (x86)\World of Warcraft\_retail_\Interface\AddOns`. If this is not the location where you have World of Warcraft installed, you will need to edit `config.ini` to point to your addons folder.
 
@@ -38,9 +38,17 @@ The default name of the addon list file is `addons.txt`, but this file will not 
 
 The `Installed Versions File` property determines where to store the file that keeps track of the current versions of your addons.
 
+## Supported addon hosts
+The following hosts are supported as download targets. The URL specified should be to the main page of the addon, or in the case of GitHub, to the root of the repository.
+- Curse (`https://www.curseforge.com/wow/addons/...`)
+- WoWAce (`https://www.wowace.com/projects/...`)
+- WoWInterface (`https://www.wowinterface.com/downloads/...`)
+- GitHub (`https://github.com/some-user/some-repo`)
+- Tukui (`https://git.tukui.org/elvui/elvui|ElvUI`)
+
 ## Input file format
 
-Whatever file you use for your list of mods needs to be formatted in a particular way. Each line corresponds to a mod, and the line just needs to contain the link to the Curse or WoWInterface page for the mod. For example:
+Whatever file you use for your list of addons needs to be formatted in a particular way. Each line corresponds to an addon, and the line just needs to contain the link to the page for the addon. For example:
 
 ```
 https://www.curseforge.com/wow/addons/world-quest-tracker
@@ -51,13 +59,12 @@ http://www.wowinterface.com/downloads/info24005-RavenousMounts.html
     
 Each link needs to be the main page for the addon, as shown above.
 
+### Addons archives containing subfolders
 If you want to extract a subfolder from the default downloaded folder (typically needed with Tukui addons), add a pipe character (`|`) and the name of the subfolder at the end of the line. For example, the ElvUI addon can be added as follows:
 
 ```
 https://git.tukui.org/elvui/elvui|ElvUI
 ```
-
-because the downloadable zip from this website contains a subfolder called "ElvUI" containing the actual mod.
 
 ## Contributing
 Bring up the dev `pipenv` with:
