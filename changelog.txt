@@ -1,5 +1,11 @@
 Changelog
 
+* 8/16/2019
+Squashed bugs!
+Fixed a major problem with subfolder extraction for archives i.e. you can now select folders again from the ElvUI repo!
+Fixed an installation record being added for an addon which really didn't get installed due to a download or unzip failure.
+Lastly, added support for any generic GitHub-hosted addon (thanks @Hjaltesorgenfrei)!
+
 * 8/11/2019 - Large internal project refactor. As a result, new commands to install and execute the module. Details in the README.md.
 
 * 8/7/2019 - Took over development of this great dead project. Improved run time by a huge factor (it should run in just a few seconds total, vs. a few seconds PER addon update). Added clickable executables, so users don't have to run python in their terminal. Cleaned up lots of style and refactored some code.
