@@ -47,6 +47,9 @@ class AddonManager:
         with open(self.ADDON_LIST_FILE, 'r') as fin:
             addon_entries = fin.read().splitlines()
 
+        # filter any blank lines or lines commented with an octothorp (#)
+        addon_entries = [entry for entry in addon_entries if entry and not entry.startswith('#')]
+
         for addon_entry in addon_entries:
             thread = threading.Thread(target=self.update_addon, args=(addon_entry,))
             threads.append(thread)
@@ -59,10 +62,7 @@ class AddonManager:
         self.display_results()
 
     def update_addon(self, addon_entry):
-        if not addon_entry or addon_entry.startswith('#'):
-            return
-
-        # Expected format: "mydomain.com/myaddonurl" or "mydomain.com/myaddonurl|subfolder"
+        # Expected format: "mydomain.com/myzip.zip" or "mydomain.com/myzip.zip|subfolder"
         addon_url, *subfolder = addon_entry.split('|')
 
         site = site_handler.get_handler(addon_url)
