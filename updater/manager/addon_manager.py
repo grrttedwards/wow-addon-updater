@@ -47,6 +47,9 @@ class AddonManager:
         with open(self.ADDON_LIST_FILE, 'r') as fin:
             addon_entries = fin.read().splitlines()
 
+        # filter any blank lines or lines commented with an octothorp (#)
+        addon_entries = [entry for entry in addon_entries if entry and not entry.startswith('#')]
+
         for addon_entry in addon_entries:
             thread = threading.Thread(target=self.update_addon, args=(addon_entry,))
             threads.append(thread)
@@ -59,10 +62,7 @@ class AddonManager:
         self.display_results()
 
     def update_addon(self, addon_entry):
-        if not addon_entry or addon_entry.startswith('#'):
-            return
-
-        # Expected format: "mydomain.com/myaddonurl" or "mydomain.com/myaddonurl|subfolder"
+        # Expected format: "mydomain.com/myaddon" or "mydomain.com/myaddon|subfolder"
         addon_url, *subfolder = addon_entry.split('|')
 
         site = site_handler.get_handler(addon_url)
@@ -131,7 +131,7 @@ class AddonManager:
 
     def set_installed_versions(self):
         versions = {}
-        for (addon_name, addon_url, _, new_version) in self.manifest:
+        for (addon_name, addon_url, _, new_version) in sorted(self.manifest):
             if new_version != AddonManager._UNAVAILABLE:
                 versions[addon_name] = {"url": addon_url, "version": new_version}
 
@@ -142,12 +142,13 @@ class AddonManager:
 
     def display_results(self):
         headers = [["Name", "Prev. Version", "New Version"],
-                   ["-" * 4, "-" * 13, "-" * 11]]
+                   ["─" * 4, "─" * 13, "─" * 11]]
         table = [[name,
-                  "Not found" if prev is None else prev,
+                  "-----" if prev is None else prev,
                   "Up to date" if new == prev else new]
                  for name, _, prev, new in self.manifest]  # eliminate the URL
         results = headers + table
         col_width = max(len(word) for row in results for word in row) + 2  # padding
+        print()
         for row in results:
             print("".join(word.ljust(col_width) for word in row))
