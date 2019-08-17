@@ -62,7 +62,7 @@ class AddonManager:
         self.display_results()
 
     def update_addon(self, addon_entry):
-        # Expected format: "mydomain.com/myzip.zip" or "mydomain.com/myzip.zip|subfolder"
+        # Expected format: "mydomain.com/myaddon" or "mydomain.com/myaddon|subfolder"
         addon_url, *subfolder = addon_entry.split('|')
 
         site = site_handler.get_handler(addon_url)
