@@ -11,8 +11,7 @@ class WoWAce(AbstractSite):
 
     def __init__(self, url: str, game_version: GameVersion):
         if game_version != GameVersion.retail:
-            print("Updating classic addons are not yet supported for WoWAce.")
-            raise NotImplementedError()
+            raise NotImplementedError("Updating classic addons are not yet supported for WoWAce.")
         self.game_version = game_version
         super().__init__(url)
 
