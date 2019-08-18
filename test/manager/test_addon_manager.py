@@ -33,7 +33,7 @@ EXP_MANIFEST = [[EXP_NAME, TEST_URL, EXP_INST_VERSION, EXP_LATEST_VERSION]]
 
 class TestAddonManager(unittest.TestCase):
     def setUp(self):
-        self.mock_site = MockSite(TEST_URL, GameVersion.retail)
+        self.mock_site = MockSite(TEST_URL, GameVersion.agnostic)
         patcher = patch('updater.manager.addon_manager.site_handler.get_handler')
         patcher.start().return_value = self.mock_site
         with patch.object(addon_manager.AddonManager, "__init__", lambda x: None):
