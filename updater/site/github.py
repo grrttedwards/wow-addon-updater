@@ -25,14 +25,14 @@ class Github(AbstractSite):
             response.raise_for_status()
             content = str(response.content)
             version = re.search(
-                r'<a data-pjax.*?\/commit\/(?P<hash>.*?)">',
+                r"<a data-pjax.*?/commit/(?P<hash>.*?)\">",
                 content).group('hash')
-            return version
+            return version[:7]  # truncate the hash to the first 7 digits
         except Exception:
             print(f"Failed to find version number for: {self.url}")
             raise
     
     def get_addon_name(self):
         addon_name = AbstractSite.get_addon_name(self)
-        addon_name = re.search(r".*?\/(?P<name>.+?)\/", addon_name).group('name')
+        addon_name = re.search(r".*?/(?P<name>.+?)/", addon_name).group('name')
         return addon_name

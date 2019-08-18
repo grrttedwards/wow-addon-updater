@@ -23,13 +23,10 @@ class Tukui(AbstractSite):
             response = requests.get(self.url)
             response.raise_for_status()
             content = str(response.content)
-            match = re.search(
+            version = re.search(
                 r'data-title="Copy commit SHA to clipboard".*data-clipboard-text="(?P<hash>[a-f0-9]{40}?)"',
-                content)
-            result = ''
-            if match:
-                result = match.group('hash')
-            return result.strip()
+                content).group('hash')
+            return version[:7]  # truncate the hash to the first 7 digits
         except Exception:
             print(f"Failed to find version number for: {self.url}")
             raise

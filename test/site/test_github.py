@@ -18,7 +18,7 @@ class TestGithub(unittest.TestCase):
 
     def test_integration_github_get_latest_version(self):
         latest_version = self.github.get_latest_version()
-        self.assertRegex(latest_version, r"([a-f0-9]{40})")  # something like a SHA-1 hash
+        self.assertRegex(latest_version, r"([a-f0-9]{7})")  # something like an abbreviated SHA-1 hash
 
     def test_github_get_supported_urls(self):
         supported_urls = self.github.get_supported_urls()
