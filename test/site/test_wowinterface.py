@@ -1,12 +1,13 @@
 import unittest
 
 from updater.site import wowinterface
+from updater.site.enum import GameVersion
 
 
 class TestWowInterface(unittest.TestCase):
     def setUp(self):
         self.url = 'https://www.wowinterface.com/downloads/info11190-Bartender4.html'
-        self.wowinterface = wowinterface.WoWInterface(self.url)
+        self.wowinterface = wowinterface.WoWInterface(self.url, GameVersion.retail)
 
     def test_integration_wowinterface_find_zip_url(self):
         zip_url = self.wowinterface.find_zip_url()

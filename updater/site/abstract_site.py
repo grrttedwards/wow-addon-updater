@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
 
 
+class SiteError(Exception):
+    pass
+
+
 class AbstractSite(ABC):
     def __init__(self, url: str):
         self.url = url

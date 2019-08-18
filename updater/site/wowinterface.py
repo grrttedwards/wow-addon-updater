@@ -2,13 +2,18 @@ import re
 
 import requests
 
-from updater.site.abstract_site import AbstractSite
+from updater.site.abstract_site import AbstractSite, SiteError
+from updater.site.enum import GameVersion
 
 
 class WoWInterface(AbstractSite):
     _URL = 'https://www.wowinterface.com/downloads/'
 
-    def __init__(self, url: str):
+    def __init__(self, url: str, game_version: GameVersion):
+        if game_version is GameVersion.classic:
+            print("Updating classic addons are not yet supported for WoWAce.")
+            raise NotImplementedError()
+        self.game_version = game_version
         super().__init__(url)
 
     @classmethod
@@ -25,8 +30,7 @@ class WoWInterface(AbstractSite):
             end_quote = content_string.find('"', index_of_ziploc)  # ending quote after the url
             return content_string[index_of_ziploc:end_quote]
         except Exception:
-            print('Failed to find downloadable zip file for addon. Skipping...\n')
-            raise
+            raise SiteError(f"Failed to find downloadable zip file for {self.game_version}: {self.url}")
 
     def get_latest_version(self):
         try:
@@ -37,8 +41,7 @@ class WoWInterface(AbstractSite):
             end_tag = content_string.find('</div>', index_of_ver)  # ending tag after the version string
             return content_string[index_of_ver:end_tag].strip()
         except Exception:
-            print('Failed to find version number for: ' + self.url)
-            raise
+            raise SiteError(f"Failed to find version number for {self.game_version}: {self.url}")
 
     def get_addon_name(self):
         addon_name = AbstractSite.get_addon_name(self)

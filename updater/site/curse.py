@@ -2,7 +2,8 @@ import re
 
 import requests
 
-from updater.site.abstract_site import AbstractSite
+from updater.site.abstract_site import AbstractSite, SiteError
+from updater.site.enum import GameVersion
 
 
 class Curse(AbstractSite):
@@ -10,7 +11,8 @@ class Curse(AbstractSite):
     _OLD_URL = 'https://mods.curse.com/addons/wow/'
     _OLD_PROJECT_URL = 'https://wow.curseforge.com/projects/'
 
-    def __init__(self, url: str):
+    def __init__(self, url: str, game_version: GameVersion):
+        self.game_version = game_version
         url = Curse._convert_old_curse_urls(url)
         super().__init__(url)
 
@@ -20,16 +22,16 @@ class Curse(AbstractSite):
 
     def find_zip_url(self):
         try:
-            page = requests.get(self.url + '/download')
+            page = requests.get(self.url)
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
-            # Will be the index of the first char of the url
-            index_of_ziploc = content_string.find('PublicProjectDownload.countdown') + 33
-            end_quote = content_string.find('"', index_of_ziploc)  # Will be the index of the ending quote after the url
-            return 'https://www.curseforge.com' + content_string[index_of_ziploc:end_quote]
+            retail_zip_url, *classic_zip_url = re.findall(
+                r"cf-recentfiles-credits-wrapper ml-auto my-auto.+?href=\"(?P<download>.+?)\"",
+                content_string)
+            zip_url = classic_zip_url[-1] if self.game_version is GameVersion.classic else retail_zip_url
+            return f'https://www.curseforge.com{zip_url}/file'
         except Exception:
-            print('Failed to find downloadable zip file for addon. Skipping...\n')
-            raise
+            raise SiteError(f"Failed to find downloadable zip file for {self.game_version}: {self.url}")
 
     def get_latest_version(self):
         try:
@@ -37,13 +39,13 @@ class Curse(AbstractSite):
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
             # the first one encountered will be the WoW retail version
-            version = re.search(
+            retail_version, *classic_version = re.findall(
                 r"cf-recentfiles.+?data-id=.+?data-name=\"(?P<version>.+?)\"",
-                content_string).group('version')
-            return version
+                content_string)
+            return classic_version[-1] if self.game_version is GameVersion.classic else retail_version
         except Exception:
             # print('Failed to find version number for: ' + self.url)
-            raise Exception('Failed to find version number for: ' + self.url)
+            raise SiteError(f"Failed to find version number for {self.game_version}: {self.url}")
 
     @classmethod
     def _convert_old_curse_urls(cls, url: str) -> str:
@@ -55,7 +57,6 @@ class Curse(AbstractSite):
                 page.raise_for_status()
                 return page.url
             except Exception:
-                print(f"Failed to find the current page for old URL [{url}]. Skipping...\n")
-                raise
+                raise SiteError(f"Failed to find the current page for old URL: {url}")
         else:
             return url

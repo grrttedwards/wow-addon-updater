@@ -10,6 +10,8 @@ import requests
 from requests import HTTPError
 
 from updater.site import site_handler
+from updater.site.abstract_site import SiteError
+from updater.site.enum import GameVersion
 
 
 def error(message: str):
@@ -32,19 +34,23 @@ class AddonManager:
         config.read(AddonManager._CONFIG_FILE)
 
         try:
-            self.WOW_ADDON_LOCATION = config['WOW ADDON UPDATER']['WoW Addon Location']
-            self.ADDON_LIST_FILE = config['WOW ADDON UPDATER']['Addon List File']
-            self.INSTALLED_VERS_FILE = config['WOW ADDON UPDATER']['Installed Versions File']
+            self.wow_addon_location = config['WOW ADDON UPDATER']['WoW Addon Location']
+            self.addon_list_file = config['WOW ADDON UPDATER']['Addon List File']
+            self.installed_vers_file = config['WOW ADDON UPDATER']['Installed Versions File']
+            self.game_version = GameVersion[config['WOW ADDON UPDATER']['Game Version']]
         except Exception:
             error("Failed to parse configuration file. Are you sure it is formatted correctly?")
 
-        if not isfile(self.ADDON_LIST_FILE):
-            error(f"Failed to read addon list file ({self.ADDON_LIST_FILE}). Are you sure the file exists?")
+        if not isfile(self.addon_list_file):
+            error(f"Failed to read addon list file ({self.addon_list_file}). Are you sure the file exists?")
+
+        if not isdir(self.wow_addon_location):
+            error(f"Could not find addon directory ({self.wow_addon_location}). Are you sure it exists?")
 
     def update_all(self):
         threads = []
 
-        with open(self.ADDON_LIST_FILE, 'r') as fin:
+        with open(self.addon_list_file, 'r') as fin:
             addon_entries = fin.read().splitlines()
 
         # filter any blank lines or lines commented with an octothorp (#)
@@ -65,7 +71,7 @@ class AddonManager:
         # Expected format: "mydomain.com/myaddon" or "mydomain.com/myaddon|subfolder"
         addon_url, *subfolder = addon_entry.split('|')
 
-        site = site_handler.get_handler(addon_url)
+        site = site_handler.get_handler(addon_url, self.game_version)
 
         addon_name = site.get_addon_name()
 
@@ -75,8 +81,8 @@ class AddonManager:
 
         try:
             latest_version = site.get_latest_version()
-        except Exception:
-            print(f"Failed to retrieve latest version for {addon_name}.\n")
+        except Exception as e:
+            print(e)
             latest_version = AddonManager._UNAVAILABLE
 
         installed_version = self.get_installed_version(addon_name)
@@ -97,7 +103,10 @@ class AddonManager:
             except KeyError:
                 print(f"Failed to find subfolder [{subfolder}] in archive for [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
-            except Exception:
+            except SiteError as e:
+                print(e)
+                latest_version = AddonManager._UNAVAILABLE
+            except Exception as e:
                 print(f"Unexpected error unzipping [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
 
@@ -112,18 +121,18 @@ class AddonManager:
     def extract_to_addons(self, zipped: zipfile.ZipFile, subfolder):
         if subfolder:
             top_level_folder, *_ = zipped.namelist()
-            destination_dir = join(self.WOW_ADDON_LOCATION, subfolder)
+            destination_dir = join(self.wow_addon_location, subfolder)
             with tempfile.TemporaryDirectory() as temp_dir:
                 zipped.extractall(path=temp_dir)
                 if isdir(destination_dir):
                     shutil.rmtree(destination_dir)
                 shutil.copytree(src=join(temp_dir, top_level_folder, subfolder), dst=destination_dir)
         else:
-            zipped.extractall(self.WOW_ADDON_LOCATION)
+            zipped.extractall(self.wow_addon_location)
 
     def get_installed_version(self, addon_name):
         installed_vers = configparser.ConfigParser()
-        installed_vers.read(self.INSTALLED_VERS_FILE)
+        installed_vers.read(self.installed_vers_file)
         try:
             return installed_vers.get(addon_name, 'version')
         except (configparser.NoSectionError, configparser.NoOptionError):
@@ -137,7 +146,7 @@ class AddonManager:
 
         installed_versions = configparser.ConfigParser()
         installed_versions.read_dict(versions)
-        with open(self.INSTALLED_VERS_FILE, 'wt') as installed_versions_file:
+        with open(self.installed_vers_file, 'wt') as installed_versions_file:
             installed_versions.write(installed_versions_file)
 
     def display_results(self):

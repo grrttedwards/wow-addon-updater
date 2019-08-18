@@ -1,12 +1,13 @@
 import unittest
 
 from updater.site import wowace
+from updater.site.enum import GameVersion
 
 
 class TestWowAce(unittest.TestCase):
     def setUp(self):
         self.url = 'https://www.wowace.com/projects/bartender4'
-        self.wowace = wowace.WoWAce(self.url)
+        self.wowace = wowace.WoWAce(self.url, GameVersion.retail)
 
     def test_integration_wowace_find_zip_url(self):
         zip_url = self.wowace.find_zip_url()

@@ -8,6 +8,7 @@ from test import testutils
 from updater.manager import addon_manager
 from updater.manager.addon_manager import AddonManager
 from updater.site.abstract_site import AbstractSite
+from updater.site.enum import GameVersion
 
 
 class MockSite(AbstractSite):
@@ -39,6 +40,7 @@ class TestAddonManager(unittest.TestCase):
             self.manager = addon_manager.AddonManager()
         self.manager.manifest = []
         self.manager.get_installed_version = Mock(return_value=EXP_INST_VERSION)
+        self.manager.game_version = GameVersion.retail
 
         self.addCleanup(patcher.stop)
 
@@ -63,7 +65,7 @@ class TestAddonManager(unittest.TestCase):
 
     def test_extract_archive_subfolder(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.manager.WOW_ADDON_LOCATION = temp_dir
+            self.manager.wow_addon_location = temp_dir
             mock_zipfile = zipfile.ZipFile(testutils.get_file('some-fake-addon.zip'))
             self.manager.extract_to_addons(mock_zipfile, "sub-folder")
 
@@ -72,7 +74,7 @@ class TestAddonManager(unittest.TestCase):
 
     def test_extract_entire_archive(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.manager.WOW_ADDON_LOCATION = temp_dir
+            self.manager.wow_addon_location = temp_dir
             mock_zipfile = zipfile.ZipFile(testutils.get_file('some-fake-addon.zip'))
             self.manager.extract_to_addons(mock_zipfile, None)
 

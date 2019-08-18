@@ -2,7 +2,7 @@ import re
 
 import requests
 
-from updater.site.abstract_site import AbstractSite
+from updater.site.abstract_site import AbstractSite, SiteError
 
 
 class Tukui(AbstractSite):
@@ -28,5 +28,4 @@ class Tukui(AbstractSite):
                 content).group('hash')
             return version[:7]  # truncate the hash to the first 7 digits
         except Exception:
-            print(f"Failed to find version number for: {self.url}")
-            raise
+            raise SiteError(f"Failed to find version number for: {self.url}")

@@ -1,7 +1,8 @@
-import requests
 import re
 
-from updater.site.abstract_site import AbstractSite
+import requests
+
+from updater.site.abstract_site import AbstractSite, SiteError
 
 
 class Github(AbstractSite):
@@ -29,9 +30,8 @@ class Github(AbstractSite):
                 content).group('hash')
             return version[:7]  # truncate the hash to the first 7 digits
         except Exception:
-            print(f"Failed to find version number for: {self.url}")
-            raise
-    
+            raise SiteError(f"Failed to find version number for: {self.url}")
+
     def get_addon_name(self):
         addon_name = AbstractSite.get_addon_name(self)
         addon_name = re.search(r".*?/(?P<name>.+?)/", addon_name).group('name')
