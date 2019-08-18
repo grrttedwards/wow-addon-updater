@@ -1,13 +1,16 @@
 from abc import ABC, abstractmethod
 
+from updater.site.enum import GameVersion
+
 
 class SiteError(Exception):
     pass
 
 
 class AbstractSite(ABC):
-    def __init__(self, url: str):
+    def __init__(self, url: str, game_version: GameVersion):
         self.url = url
+        self.game_version = game_version
 
     @classmethod
     def handles(cls, url: str) -> bool:
@@ -34,3 +37,9 @@ class AbstractSite(ABC):
         for url in self.get_supported_urls():
             name = name.replace(url, '')
         return name
+
+    def download_error(self):
+        return SiteError(f"Failed to find downloadable zip file for {self.game_version}: {self.url}")
+
+    def version_error(self):
+        return SiteError(f"Failed to find version number for {self.game_version}: {self.url}")

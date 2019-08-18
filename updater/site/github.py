@@ -2,7 +2,8 @@ import re
 
 import requests
 
-from updater.site.abstract_site import AbstractSite, SiteError
+from updater.site.abstract_site import AbstractSite
+from updater.site.enum import GameVersion
 
 
 class Github(AbstractSite):
@@ -11,7 +12,7 @@ class Github(AbstractSite):
     def __init__(self, url: str):
         if '/tree/master' not in url:
             url = (url + '/tree/master')
-        super().__init__(url)
+        super().__init__(url, GameVersion.agnostic)
 
     @classmethod
     def get_supported_urls(cls):
@@ -29,8 +30,8 @@ class Github(AbstractSite):
                 r"<a data-pjax.*?/commit/(?P<hash>.*?)\">",
                 content).group('hash')
             return version[:7]  # truncate the hash to the first 7 digits
-        except Exception:
-            raise SiteError(f"Failed to find version number for: {self.url}")
+        except Exception as e:
+            raise self.version_error() from e
 
     def get_addon_name(self):
         addon_name = AbstractSite.get_addon_name(self)

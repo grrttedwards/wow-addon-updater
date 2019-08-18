@@ -7,7 +7,7 @@ from unittest.mock import patch, Mock
 from test import testutils
 from updater.manager import addon_manager
 from updater.manager.addon_manager import AddonManager
-from updater.site.abstract_site import AbstractSite
+from updater.site.abstract_site import AbstractSite, SiteError
 from updater.site.enum import GameVersion
 
 
@@ -33,9 +33,9 @@ EXP_MANIFEST = [[EXP_NAME, TEST_URL, EXP_INST_VERSION, EXP_LATEST_VERSION]]
 
 class TestAddonManager(unittest.TestCase):
     def setUp(self):
-        self.mock_site = MockSite(TEST_URL)
+        self.mock_site = MockSite(TEST_URL, GameVersion.retail)
         patcher = patch('updater.manager.addon_manager.site_handler.get_handler')
-        patcher.start().return_value = MockSite(TEST_URL)
+        patcher.start().return_value = self.mock_site
         with patch.object(addon_manager.AddonManager, "__init__", lambda x: None):
             self.manager = addon_manager.AddonManager()
         self.manager.manifest = []
@@ -59,7 +59,7 @@ class TestAddonManager(unittest.TestCase):
         self.assertFailedInstall()
 
     def test_get_latest_version_fail_doesnt_install_addon(self):
-        self.mock_site.get_latest_version = Mock(side_effect=Exception())
+        self.mock_site.get_latest_version = Mock(side_effect=SiteError())
         self.manager.update_addon(TEST_URL)
         self.assertFailedInstall()
 

@@ -106,7 +106,7 @@ class AddonManager:
             except SiteError as e:
                 print(e)
                 latest_version = AddonManager._UNAVAILABLE
-            except Exception as e:
+            except Exception:
                 print(f"Unexpected error unzipping [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
 

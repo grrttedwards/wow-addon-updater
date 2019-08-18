@@ -2,7 +2,7 @@ import re
 
 import requests
 
-from updater.site.abstract_site import AbstractSite, SiteError
+from updater.site.abstract_site import AbstractSite
 from updater.site.enum import GameVersion
 
 
@@ -12,8 +12,7 @@ class WoWAce(AbstractSite):
     def __init__(self, url: str, game_version: GameVersion):
         if game_version != GameVersion.retail:
             raise NotImplementedError("Updating classic addons are not yet supported for WoWAce.")
-        self.game_version = game_version
-        super().__init__(url)
+        super().__init__(url, game_version)
 
     @classmethod
     def get_supported_urls(cls):
@@ -32,5 +31,5 @@ class WoWAce(AbstractSite):
                 r"project-file-name-container.+?data-id=.+?data-name=\"(?P<version>.+?)\"",
                 content_string).group('version')
             return version
-        except Exception:
-            raise SiteError(f"Failed to find version number for {self.game_version}: {self.url}")
+        except Exception as e:
+            raise self.version_error() from e
