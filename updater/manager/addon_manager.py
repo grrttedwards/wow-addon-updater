@@ -81,7 +81,7 @@ class AddonManager:
 
         try:
             latest_version = site.get_latest_version()
-        except Exception as e:
+        except SiteError as e:
             print(e)
             latest_version = AddonManager._UNAVAILABLE
 
