@@ -39,7 +39,7 @@ class AbstractSite(ABC):
         return name
 
     def download_error(self) -> SiteError:
-        return SiteError(f"Failed to find downloadable zip file for {self.game_version}: {self.url}")
+        return SiteError(f"Failed to find downloadable file for game version: {self.game_version}, {self.url}")
 
     def version_error(self) -> SiteError:
-        return SiteError(f"Failed to find version number for {self.game_version}: {self.url}")
+        return SiteError(f"Failed to find addon version number for game version: {self.game_version}, {self.url}")
