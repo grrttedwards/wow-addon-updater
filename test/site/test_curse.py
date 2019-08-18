@@ -14,7 +14,7 @@ version_test_data = [
 class TestCurse(unittest.TestCase):
     def setUp(self):
         self.url = 'https://www.curseforge.com/wow/addons/bartender4'
-        self.curse = curse.Curse(self.url, GameVersion['retail'])
+        self.curse = curse.Curse(self.url, GameVersion.retail)
 
     def test_integration_curse_find_zip_url(self):
         for game_version in GameVersion.__members__.values():
