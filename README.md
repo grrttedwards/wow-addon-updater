@@ -38,13 +38,18 @@ The default name of the addon list file is `addons.txt`, but this file will not 
 
 The `Installed Versions File` property determines where to store the file that keeps track of the current versions of your addons.
 
+The game version that you would like to target addons for must be specified in the `Game Version` property. The two options are `retail` or `classic`.
+
 ## Supported addon hosts
 The following hosts are supported as download targets. The URL specified should be to the main page of the addon, or in the case of GitHub, to the root of the repository.
-- Curse (`https://www.curseforge.com/wow/addons/...`)
-- WoWAce (`https://www.wowace.com/projects/...`)
-- WoWInterface (`https://www.wowinterface.com/downloads/...`)
-- GitHub (`https://github.com/some-user/some-repo`)
-- Tukui (`https://git.tukui.org/elvui/elvui|ElvUI`)
+
+|               | Retail | Classic |
+|---------------|--------|---------|
+| Curse         | ✅      | ✅       |
+| WoWAce        | ✅      | ❌ Soon  |
+|  WoWInterface | ✅      | ❌ Soon  |
+| GitHub        | ✅      | ✅       |
+| Tukui         | ✅      | N/A     |
 
 ## Input file format
 
@@ -54,9 +59,10 @@ Whatever file you use for your list of addons needs to be formatted in a particu
 https://www.curseforge.com/wow/addons/world-quest-tracker
 https://www.curseforge.com/wow/addons/deadly-boss-mods
 https://www.curseforge.com/wow/addons/auctionator
-http://www.wowinterface.com/downloads/info24005-RavenousMounts.html
+https://www.wowinterface.com/downloads/info24005-RavenousMounts.html
+https://www.github.com/some-user/some-addon-repo
 ```
-    
+
 Each link needs to be the main page for the addon, as shown above.
 
 ### Addons archives containing subfolders
