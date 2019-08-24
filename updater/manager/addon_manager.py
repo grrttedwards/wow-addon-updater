@@ -106,7 +106,7 @@ class AddonManager:
             except SiteError as e:
                 print(e)
                 latest_version = AddonManager._UNAVAILABLE
-            except Exception:
+            except Exception as e:
                 print(f"Unexpected error unzipping [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
 
@@ -119,16 +119,21 @@ class AddonManager:
         return zipfile.ZipFile(BytesIO(r.content))
 
     def extract_to_addons(self, zipped: zipfile.ZipFile, subfolder):
-        if subfolder:
-            top_level_folder, *_ = zipped.namelist()
-            destination_dir = join(self.wow_addon_location, subfolder)
-            with tempfile.TemporaryDirectory() as temp_dir:
-                zipped.extractall(path=temp_dir)
-                if isdir(destination_dir):
-                    shutil.rmtree(destination_dir)
-                shutil.copytree(src=join(temp_dir, top_level_folder, subfolder), dst=destination_dir)
-        else:
-            zipped.extractall(self.wow_addon_location)
+        first_zip_member, *_ = zipped.namelist()
+        # sometimes zip files don't contain an entry for the top-level folder, so parse it from the first nested member
+        top_level_folder, *_ = first_zip_member.split('/')
+        with tempfile.TemporaryDirectory() as temp_dir:
+            if subfolder:
+                destination_dir = join(self.wow_addon_location, subfolder)
+                temp_source_dir = join(temp_dir, top_level_folder, subfolder)
+            else:
+                # unfortunately include some github-specific folder logic here... maybe think about how to refactor this
+                destination_dir = join(self.wow_addon_location, top_level_folder.replace('-master', ''))
+                temp_source_dir = join(temp_dir, top_level_folder)
+            zipped.extractall(path=temp_dir)
+            if isdir(destination_dir):
+                shutil.rmtree(destination_dir)
+            shutil.copytree(src=temp_source_dir, dst=destination_dir)
 
     def get_installed_version(self, addon_name):
         installed_vers = configparser.ConfigParser()

@@ -48,6 +48,20 @@ class TestAddonManager(unittest.TestCase):
         self.assertListEqual([[EXP_NAME, TEST_URL, EXP_INST_VERSION, EXP_LATEST_VERSION]],
                              self.manager.manifest)
 
+    def extractAddon(self, filename, temp_dir, subfolder=None):
+        self.manager.wow_addon_location = temp_dir
+        mock_zipfile = zipfile.ZipFile(testutils.get_file(filename))
+        self.manager.extract_to_addons(mock_zipfile, subfolder)
+
+    def assertExtractionSuccess(self, temp_dir, *args):
+        for index in range(1, len(args)):
+            sub_args = args[:index]
+            if index == len(args):
+                # the last one should be a file, not directory
+                self.assertTrue(os.path.isfile(os.path.join(temp_dir, *sub_args)))
+            else:
+                self.assertTrue(os.path.isdir(os.path.join(temp_dir, *sub_args)))
+
     def test_download_fail_doesnt_install_addon(self):
         self.manager.get_addon_zip = Mock(side_effect=Exception())
         self.manager.update_addon(TEST_URL)
@@ -65,22 +79,23 @@ class TestAddonManager(unittest.TestCase):
 
     def test_extract_archive_subfolder(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.manager.wow_addon_location = temp_dir
-            mock_zipfile = zipfile.ZipFile(testutils.get_file('some-fake-addon.zip'))
-            self.manager.extract_to_addons(mock_zipfile, "sub-folder")
-
-            self.assertTrue(os.path.isdir(os.path.join(temp_dir, 'sub-folder')))
-            self.assertTrue(os.path.isfile(os.path.join(temp_dir, 'sub-folder', 'file1.txt')))
+            self.extractAddon('some-fake-addon.zip', temp_dir, 'sub-folder')
+            self.assertExtractionSuccess(temp_dir, 'sub-folder', 'file1.txt')
 
     def test_extract_entire_archive(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.manager.wow_addon_location = temp_dir
-            mock_zipfile = zipfile.ZipFile(testutils.get_file('some-fake-addon.zip'))
-            self.manager.extract_to_addons(mock_zipfile, None)
+            self.extractAddon('some-fake-addon.zip', temp_dir)
+            self.assertExtractionSuccess(temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')
 
-            self.assertTrue(os.path.isdir(os.path.join(temp_dir, 'some-fake-addon')))
-            self.assertTrue(os.path.isdir(os.path.join(temp_dir, 'some-fake-addon', 'sub-folder')))
-            self.assertTrue(os.path.isfile(os.path.join(temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')))
+    def test_extract_entire_archive_github_master_zipball(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            self.extractAddon('some-fake-addon-master.zip', temp_dir)
+            self.assertExtractionSuccess(temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')
+
+    def test_extract_entire_archive_curse(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            self.extractAddon('some-fake-addon-from-curse.zip', temp_dir)
+            self.assertExtractionSuccess(temp_dir, 'AddonName', 'sub-folder', 'file1.txt')
 
 
 if __name__ == '__main__':
