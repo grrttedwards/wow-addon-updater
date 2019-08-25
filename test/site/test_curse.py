@@ -22,7 +22,7 @@ class TestCurse(unittest.TestCase):
                 c = curse.Curse(self.url, game_version)
                 zip_url = c.find_zip_url()
                 # example: https://www.curseforge.com/wow/addons/bartender4/download/2730531/file
-                self.assertRegex(zip_url, rf"{self.url}/download/[0-9]+/file")
+                self.assertRegex(zip_url.lower(), rf"{self.url}/download/[0-9]+/file")
 
     def test_integration_curse_get_addon_name(self):
         addon_name = self.curse.get_addon_name()
