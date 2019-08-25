@@ -1,12 +1,12 @@
 import unittest
 
-from updater.site.github import Github
+from updater.site.github import GitHub
 
 
 class TestGithub(unittest.TestCase):
     def setUp(self):
         self.url = 'https://github.com/smp4903/FiveSecondRule'
-        self.github = Github(self.url)
+        self.github = GitHub(self.url)
 
     def test_integration_github_find_zip_url(self):
         zip_url = self.github.find_zip_url()

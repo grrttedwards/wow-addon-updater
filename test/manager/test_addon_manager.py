@@ -7,6 +7,7 @@ from unittest.mock import patch, Mock
 from test import testutils
 from updater.manager import addon_manager
 from updater.manager.addon_manager import AddonManager
+from updater.site import curse, github
 from updater.site.abstract_site import AbstractSite, SiteError
 from updater.site.enum import GameVersion
 
@@ -48,10 +49,10 @@ class TestAddonManager(unittest.TestCase):
         self.assertListEqual([[EXP_NAME, TEST_URL, EXP_INST_VERSION, EXP_LATEST_VERSION]],
                              self.manager.manifest)
 
-    def extractAddon(self, filename, temp_dir, subfolder=None):
+    def extractAddon(self, filename, temp_dir, site, subfolder=None):
         self.manager.wow_addon_location = temp_dir
         mock_zipfile = zipfile.ZipFile(testutils.get_file(filename))
-        self.manager.extract_to_addons(mock_zipfile, subfolder)
+        self.manager.extract_to_addons(mock_zipfile, subfolder, site)
 
     def assertExtractionSuccess(self, temp_dir, *args):
         for index in range(1, len(args)):
@@ -79,23 +80,31 @@ class TestAddonManager(unittest.TestCase):
 
     def test_extract_archive_subfolder(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.extractAddon('some-fake-addon.zip', temp_dir, 'sub-folder')
+            self.extractAddon('some-fake-addon.zip', temp_dir, curse.Curse("", GameVersion.retail),
+                              subfolder='sub-folder')
             self.assertExtractionSuccess(temp_dir, 'sub-folder', 'file1.txt')
 
     def test_extract_entire_archive(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.extractAddon('some-fake-addon.zip', temp_dir)
+            self.extractAddon('some-fake-addon.zip', temp_dir, curse.Curse("", GameVersion.retail))
             self.assertExtractionSuccess(temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')
 
     def test_extract_entire_archive_github_master_zipball(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.extractAddon('some-fake-addon-master.zip', temp_dir)
+            self.extractAddon('some-fake-addon-master.zip', temp_dir, github.GitHub(""))
             self.assertExtractionSuccess(temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')
 
     def test_extract_entire_archive_curse(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.extractAddon('some-fake-addon-from-curse.zip', temp_dir)
+            self.extractAddon('some-fake-addon-from-curse.zip', temp_dir, curse.Curse("", GameVersion.retail))
             self.assertExtractionSuccess(temp_dir, 'AddonName', 'sub-folder', 'file1.txt')
+
+    def test_extract_archive_with_multiple_folders(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            self.extractAddon('some-fake-addon-with-many-folders.zip', temp_dir, curse.Curse("", GameVersion.retail))
+            self.assertExtractionSuccess(temp_dir, 'FolderA', 'sub-folder', 'file1.txt')
+            self.assertExtractionSuccess(temp_dir, 'FolderB', 'fileB.txt')
+            self.assertExtractionSuccess(temp_dir, 'FolderC', 'fileC.txt')
 
 
 if __name__ == '__main__':

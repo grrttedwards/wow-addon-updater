@@ -6,7 +6,7 @@ from updater.site.abstract_site import AbstractSite
 from updater.site.enum import GameVersion
 
 
-class Github(AbstractSite):
+class GitHub(AbstractSite):
     _URL = 'https://github.com/'
 
     def __init__(self, url: str):

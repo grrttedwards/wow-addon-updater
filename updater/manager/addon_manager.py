@@ -9,8 +9,8 @@ from os.path import isfile, isdir, join
 import requests
 from requests import HTTPError
 
-from updater.site import site_handler
-from updater.site.abstract_site import SiteError
+from updater.site import site_handler, github
+from updater.site.abstract_site import SiteError, AbstractSite
 from updater.site.enum import GameVersion
 
 
@@ -96,7 +96,7 @@ class AddonManager:
             try:
                 zip_url = site.find_zip_url()
                 addon_zip = self.get_addon_zip(zip_url)
-                self.extract_to_addons(addon_zip, subfolder)
+                self.extract_to_addons(addon_zip, subfolder, site)
             except HTTPError:
                 print(f"Failed to download zip for [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
@@ -118,22 +118,25 @@ class AddonManager:
         r.raise_for_status()  # Raise an exception for HTTP errors
         return zipfile.ZipFile(BytesIO(r.content))
 
-    def extract_to_addons(self, zipped: zipfile.ZipFile, subfolder):
-        first_zip_member, *_ = zipped.namelist()
-        # sometimes zip files don't contain an entry for the top-level folder, so parse it from the first nested member
-        top_level_folder, *_ = first_zip_member.split('/')
-        with tempfile.TemporaryDirectory() as temp_dir:
-            if subfolder:
-                destination_dir = join(self.wow_addon_location, subfolder)
-                temp_source_dir = join(temp_dir, top_level_folder, subfolder)
-            else:
-                # unfortunately include some github-specific folder logic here... maybe think about how to refactor this
-                destination_dir = join(self.wow_addon_location, top_level_folder.replace('-master', ''))
-                temp_source_dir = join(temp_dir, top_level_folder)
-            zipped.extractall(path=temp_dir)
-            if isdir(destination_dir):
-                shutil.rmtree(destination_dir)
-            shutil.copytree(src=temp_source_dir, dst=destination_dir)
+    def extract_to_addons(self, zipped: zipfile.ZipFile, subfolder, site: AbstractSite):
+        if isinstance(site, github.GitHub) or subfolder:
+            first_zip_member, *_ = zipped.namelist()
+            # sometimes zip files don't contain an entry for the top-level folder, so parse it from the first member
+            top_level_folder, *_ = first_zip_member.split('/')
+            with tempfile.TemporaryDirectory() as temp_dir:
+                # unfortunately include some github-specific folder logic here... think about how to refactor this
+                if '-master' in top_level_folder:
+                    destination_dir = join(self.wow_addon_location, top_level_folder.replace('-master', ''))
+                    temp_source_dir = join(temp_dir, top_level_folder)
+                if subfolder:
+                    destination_dir = join(self.wow_addon_location, subfolder)
+                    temp_source_dir = join(temp_dir, top_level_folder, subfolder)
+                zipped.extractall(path=temp_dir)
+                if isdir(destination_dir):
+                    shutil.rmtree(destination_dir)
+                shutil.copytree(src=temp_source_dir, dst=destination_dir)
+        else:
+            zipped.extractall(path=self.wow_addon_location)
 
     def get_installed_version(self, addon_name):
         installed_vers = configparser.ConfigParser()
