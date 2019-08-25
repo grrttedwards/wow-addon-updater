@@ -128,9 +128,6 @@ class AddonManager:
                 if '-master' in top_level_folder:
                     destination_dir = join(self.wow_addon_location, top_level_folder.replace('-master', ''))
                     temp_source_dir = join(temp_dir, top_level_folder)
-                else:
-                    destination_dir = join(self.wow_addon_location)
-                    temp_source_dir = temp_dir
                 if subfolder:
                     destination_dir = join(self.wow_addon_location, subfolder)
                     temp_source_dir = join(temp_dir, top_level_folder, subfolder)
