@@ -1,5 +1,8 @@
 Changelog
 
+* 8/25/2019
+Fixed an issue extracting addons that have multiple top-level folders.
+
 * 8/24/2019
 Fixed a folder naming issue with GitHub repository addons.
 
