@@ -8,5 +8,6 @@ coverage = "*"
 
 [packages]
 requests = "*"
+beautifulsoup4 = "*"
 
 [requires]
