@@ -1,5 +1,8 @@
 Changelog
 
+* 8/28/2019
+Made the version number fetching for ElvUI more robust and human-readable. (v12.34 instead of 8f3ade9), as well as add support for ElvUI classic repo as well.
+
 * 8/25/2019
 Fixed an issue extracting addons that have multiple top-level folders.
 
