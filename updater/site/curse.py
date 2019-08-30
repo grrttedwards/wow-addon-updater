@@ -27,7 +27,7 @@ class Curse(AbstractSite):
             retail_zip_url, *classic_zip_url = re.findall(
                 r"cf-recentfiles-credits-wrapper ml-auto my-auto.+?href=\"(?P<download>.+?)\"",
                 content_string)
-            zip_url = classic_zip_url[-1] if self.game_version is GameVersion.classic else retail_zip_url
+            zip_url = classic_zip_url[-1] if self.game_version is GameVersion.classic and classic_zip_url else retail_zip_url
             return f'https://www.curseforge.com{zip_url}/file'
         except Exception as e:
             raise self.download_error() from e
@@ -41,7 +41,7 @@ class Curse(AbstractSite):
             retail_version, *classic_version = re.findall(
                 r"cf-recentfiles.+?data-id=.+?data-name=\"(?P<version>.+?)\"",
                 content_string)
-            return classic_version[-1] if self.game_version is GameVersion.classic else retail_version
+            return classic_version[-1] if self.game_version is GameVersion.classic and classic_version else retail_version
         except Exception as e:
             raise self.version_error() from e
 
