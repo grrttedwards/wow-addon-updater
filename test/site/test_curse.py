@@ -4,6 +4,7 @@ from updater.site import curse
 from updater.site.enum import GameVersion
 
 version_test_data = [
+    ['https://www.curseforge.com/wow/addons/classiccodex', r'[0-9]+\.[0-9]+\.[0-9]+'],
     ['https://www.curseforge.com/wow/addons/bartender4', r"[0-9]+\.[0-9]+\.[0-9]+"],
     ['https://www.curseforge.com/wow/addons/big-wigs', r"v[0-9]+"],
     ['https://www.curseforge.com/wow/addons/deadly-boss-mods', r"[0-9]+\.[0-9]+\.[0-9]+"],
