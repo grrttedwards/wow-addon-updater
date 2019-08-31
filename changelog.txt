@@ -1,6 +1,9 @@
 Changelog
 
 * 8/31/2019
+Add command-line argument for specifying a configuration file. Now multiple independent configurations can be used i.e. one for retail, and one for classic.
+
+* 8/31/2019
 Enhance support for Curse classic-only addons. Now those addons can download if the page only supports one release, and that release is the classic game version.
 
 * 8/28/2019

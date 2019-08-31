@@ -21,17 +21,16 @@ def error(message: str):
 
 class AddonManager:
     _UNAVAILABLE = 'Unavailable'
-    _CONFIG_FILE = 'config.ini'
 
-    def __init__(self):
+    def __init__(self, config_file):
         self.manifest = []
 
         # Read config file
-        if not isfile(AddonManager._CONFIG_FILE):
-            error(f"Failed to read config file. Are you sure there is a file called {AddonManager._CONFIG_FILE}?")
+        if not isfile(config_file):
+            error(f"Failed to read config file. Are you sure there is a file called {config_file}?")
 
         config = configparser.ConfigParser()
-        config.read(AddonManager._CONFIG_FILE)
+        config.read(config_file)
 
         try:
             self.wow_addon_location = config['WOW ADDON UPDATER']['WoW Addon Location']

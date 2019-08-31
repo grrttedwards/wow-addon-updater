@@ -1,3 +1,4 @@
+import argparse
 from os.path import isfile
 
 import requests
@@ -25,7 +26,14 @@ def check_version():
 
 def main():
     check_version()
-    AddonManager().update_all()
+
+    parser = argparse.ArgumentParser(description='Update your WoW addons.')
+    parser.add_argument('-c', '--config', nargs='?', default='config.ini', type=str, metavar='FILE',
+                        help='the file to be used for configuration')
+
+    args = parser.parse_args()
+
+    AddonManager(args.config).update_all()
 
 
 if __name__ == "__main__":
