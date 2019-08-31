@@ -24,10 +24,11 @@ class Curse(AbstractSite):
             page = requests.get(self.url)
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
-            retail_zip_url, *classic_zip_url = re.findall(
+            main_zip_url, *classic_zip_url = re.findall(
                 r"cf-recentfiles-credits-wrapper ml-auto my-auto.+?href=\"(?P<download>.+?)\"",
                 content_string)
-            zip_url = classic_zip_url[-1] if self.game_version is GameVersion.classic else retail_zip_url
+            # if classic, choose the explicit "classic download" listed, or fall back to the only download available
+            zip_url = classic_zip_url[-1] if self.game_version is GameVersion.classic and classic_zip_url else main_zip_url
             return f'https://www.curseforge.com{zip_url}/file'
         except Exception as e:
             raise self.download_error() from e
@@ -38,10 +39,11 @@ class Curse(AbstractSite):
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
             # the first one encountered will be the WoW retail version
-            retail_version, *classic_version = re.findall(
+            main_version, *classic_version = re.findall(
                 r"cf-recentfiles.+?data-id=.+?data-name=\"(?P<version>.+?)\"",
                 content_string)
-            return classic_version[-1] if self.game_version is GameVersion.classic else retail_version
+            # if classic, choose the explicit "classic version" listed, or fall back to the only version available
+            return classic_version[-1] if self.game_version is GameVersion.classic and classic_version else main_version
         except Exception as e:
             raise self.version_error() from e
 
