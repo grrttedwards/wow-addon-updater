@@ -37,8 +37,8 @@ class TestAddonManager(unittest.TestCase):
         self.mock_site = MockSite(TEST_URL, GameVersion.agnostic)
         patcher = patch('updater.manager.addon_manager.site_handler.get_handler')
         patcher.start().return_value = self.mock_site
-        with patch.object(addon_manager.AddonManager, "__init__", lambda x: None):
-            self.manager = addon_manager.AddonManager()
+        with patch.object(addon_manager.AddonManager, "__init__", lambda x, y: None):
+            self.manager = addon_manager.AddonManager('config.ini')
         self.manager.manifest = []
         self.manager.get_installed_version = Mock(return_value=EXP_INST_VERSION)
         self.manager.game_version = GameVersion.retail
