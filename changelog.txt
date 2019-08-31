@@ -1,5 +1,8 @@
 Changelog
 
+* 8/31/2019
+Enhance support for Curse classic-only addons. Now those addons can download if the page only supports one release, and that release is the classic game version.
+
 * 8/28/2019
 Made the version number fetching for ElvUI more robust and human-readable. (v12.34 instead of 8f3ade9), as well as add support for ElvUI classic repo as well.
 
