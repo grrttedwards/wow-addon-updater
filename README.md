@@ -2,14 +2,18 @@
 
 This utility provides an alternative to the Twitch/Curse client for management and updating of addons for World of Warcraft. The Twitch/Curse client is rather bloated and buggy, and comes with many features that most users will not ever use in the first place. This utility, however, is lightweight and makes it very easy to manage which addons are being updated, and to update them just by running a python script.
 
+_Now supporting both retail and classic addon management!_
+
 [![Build Status](https://travis-ci.com/grrttedwards/wow-addon-updater.svg?branch=master)](https://travis-ci.com/grrttedwards/wow-addon-updater)
 
 ## First-time setup
 
-This utility has two dependencies:
+You must have a version of [Python](https://www.python.org/) 3.6+.
 
-* A version of [Python](https://www.python.org/) 3.6+
-* The [requests](http://docs.python-requests.org/en/master/) module
+This utility has two external dependencies:
+
+- The [requests](https://pypi.org/project/requests/) module, for making HTTP requests
+- The [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/) module, for HTML document parsing
 
 The install should be managed by [`pipenv`](https://github.com/pypa/pipenv). All you need to do is run the following:
 
@@ -26,19 +30,39 @@ After performing the setup steps, `pipenv run` is used to execute the utility. T
 pipenv run python -m updater
 ```
 
+More advanced usage includes specifying the configuration file, which is detailed in the next section.
+
 ## Configuring the utility
 
-The `config.ini` file is used by the utility to find where to install the addons to, and where to get the list of addons from.
+The `config.ini` file is used by default to find where to install the addons to, and where to get the list of addons from.
 
-The default location in Windows to install the addons to is `C:\Program Files (x86)\World of Warcraft\_retail_\Interface\AddOns`. If this is not the location where you have World of Warcraft installed, you will need to edit `config.ini` to point to your addons folder.
+It requires that some properties be set, if you do not want to use the defaults such as:
 
-The standard addon location on macOS is `/Applications/World of Warcraft/Interface/AddOns`
+- `WoW Addon Location`
+    - The WoW application files addon directory
+    - (The standard addon location on macOS is `/Applications/World of Warcraft/Interface/AddOns`)
+    - (default `= C:\Program Files (x86)\World of Warcraft\_retail_\Interface\AddOns`)
 
-The default name of the addon list file is `addons.txt`, but this file will not exist on your PC, so you should either create `addons.txt` in the same location as the utility, or name the file something else and edit "config.ini" to point to the new file.
+- `Addon List File`
+    - A file specifying which addons to install and/or update
+    - This file will not exist at first, so you should create `addons.txt` in the same directory as the utility.
+    - (default `= addons.txt`)
 
-The `Installed Versions File` property determines where to store the file that keeps track of the current versions of your addons.
+- `Installed Versions File`
+    - A file which tracks your installed addon versions
+    - (default `= installed.ini`)
 
-The game version that you would like to target addons for must be specified in the `Game Version` property. The two options are `retail` or `classic`.
+- `Game Version`
+    - The game version (either `retail` or `classic`) that you would like to target for addons 
+    - (default `= retail`)
+    
+### Multiple configurations
+The module supports a command-line configuration for maintaining multiple set of addons. For example, a set of addons for retail, and a different set of addons for classic.
+To use a different configuration file, specify it with the `--config` flag (or `-c`) e.g.
+
+```bash
+pipenv run python -m updater -c my-custom-config.ini
+```
 
 ## Supported addon hosts
 The following hosts are supported as download targets. The URL specified should be to the main page of the addon, or in the case of GitHub, to the root of the repository.
