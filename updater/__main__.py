@@ -28,7 +28,7 @@ def main():
     check_version()
 
     parser = argparse.ArgumentParser(description='Update your WoW addons.')
-    parser.add_argument('-c', '--config', nargs='?', default='config.ini', type=str,
+    parser.add_argument('-c', '--config', nargs='?', default='config.ini', type=str, metavar='FILE',
                         help='the file to be used for configuration')
 
     args = parser.parse_args()
