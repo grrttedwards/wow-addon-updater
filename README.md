@@ -10,12 +10,20 @@ _Now supporting both retail and classic addon management!_
 
 You must have a version of [Python](https://www.python.org/) 3.6+.
 
+_If you know how to manage Python packages and virtual environments, you can skip this section._
+
+You should already have `pip` included with your Python installation. This is the default package manager for Python.
+If not, download the latest version of Python  for your platform, with `pip` bundled.
+
+
+### Installing the dependencies
+
 This utility has two external dependencies:
 
 - The [requests](https://pypi.org/project/requests/) module, for making HTTP requests
 - The [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/) module, for HTML document parsing
 
-The install should be managed by [`pipenv`](https://github.com/pypa/pipenv). All you need to do is run the following:
+It's recommended you manage this with [`pipenv`](https://github.com/pypa/pipenv). All you need to do is run the following to install `pipenv` and the dependencies:
 
 ```bash
 cd wow-addon-updater/
@@ -23,14 +31,20 @@ pip install pipenv
 pipenv install
 ```
 
+The packages will be automagically installed by `pipenv` to a local virtual environment.
+
 ## Running the utility
 
-After performing the setup steps, `pipenv run` is used to execute the utility. To run from the command line, use:
+After performing the setup steps, you can run the executable scripts by clicking either:
+ - `run_Windows.bat` for Windows or 
+ - `run_MacLinux.sh` for other platforms.
+
+To run directly from the command line, use `pipenv run`:
 ```bash
-pipenv run python -m updater
+pipenv run python -m updater [-c FILE]
 ```
 
-More advanced usage includes specifying the configuration file, which is detailed in the next section.
+More advanced usage includes optionally specifying a configuration file, which is detailed in the next section.
 
 ## Configuring the utility
 
@@ -71,9 +85,9 @@ The following hosts are supported as download targets. The URL specified should 
 |---------------|--------|---------|
 | Curse         | ✅      | ✅       |
 | WoWAce        | ✅      | ❌ Soon  |
-|  WoWInterface | ✅      | ❌ Soon  |
+| WoWInterface  | ✅      | ❌ Soon  |
 | GitHub        | ✅      | ✅       |
-| Tukui         | ✅      | N/A     |
+| Tukui         | ✅      | ✅       |
 
 ## Input file format
 
