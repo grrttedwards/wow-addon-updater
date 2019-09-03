@@ -1,5 +1,8 @@
 Changelog
 
+* 9/3/2019
+Add support for WoWInterface classic addons.
+
 * 8/31/2019
 Add command-line argument for specifying a configuration file. Now multiple independent configurations can be used i.e. one for retail, and one for classic.
 

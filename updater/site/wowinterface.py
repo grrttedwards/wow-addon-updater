@@ -10,8 +10,6 @@ class WoWInterface(AbstractSite):
     _URL = 'https://www.wowinterface.com/downloads/'
 
     def __init__(self, url: str, game_version: GameVersion):
-        if game_version is GameVersion.classic:
-            raise NotImplementedError("Updating classic addons are not yet supported for WoWInterface.")
         super().__init__(url, game_version)
 
     @classmethod

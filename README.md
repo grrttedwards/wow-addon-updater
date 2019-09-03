@@ -85,7 +85,7 @@ The following hosts are supported as download targets. The URL specified should 
 |---------------|--------|---------|
 | Curse         | ✅      | ✅       |
 | WoWAce        | ✅      | ❌ Soon  |
-| WoWInterface  | ✅      | ❌ Soon  |
+| WoWInterface  | ✅      | ✅       |
 | GitHub        | ✅      | ✅       |
 | Tukui         | ✅      | ✅       |
 
