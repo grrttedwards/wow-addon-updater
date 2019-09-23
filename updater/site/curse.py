@@ -36,6 +36,9 @@ class Curse(AbstractSite):
     def get_latest_version(self):
         try:
             page = requests.get(self.url)
+            if page.status_code in [403, 503]:
+                print("Curse is temporarily blocking requests because it thinks you are a bot... please try later. "
+                      "Consider finding this addon on WoWInterface or GitHub.")
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
             # the first one encountered will be the WoW retail version
