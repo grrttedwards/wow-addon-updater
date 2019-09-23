@@ -1,5 +1,8 @@
 Changelog
 
+* 9/23/2019
+Add message for when Curse is being a jerk and blocking your requests.
+
 * 9/3/2019
 Add support for WoWInterface classic addons.
 
