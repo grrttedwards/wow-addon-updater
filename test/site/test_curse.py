@@ -12,6 +12,7 @@ version_test_data = [
 ]
 
 
+@unittest.skip
 class TestCurse(unittest.TestCase):
     def setUp(self):
         self.url = 'https://www.curseforge.com/wow/addons/bartender4'
