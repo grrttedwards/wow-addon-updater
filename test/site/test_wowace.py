@@ -4,6 +4,7 @@ from updater.site import wowace
 from updater.site.enum import GameVersion
 
 
+@unittest.skip
 class TestWowAce(unittest.TestCase):
     def setUp(self):
         self.url = 'https://www.wowace.com/projects/bartender4'
