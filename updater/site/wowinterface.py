@@ -41,5 +41,5 @@ class WoWInterface(AbstractSite):
 
     def get_addon_name(self):
         addon_name = AbstractSite.get_addon_name(self)
-        addon_name = re.search(r"info[0-9]+-(?P<name>[a-zA-z0-9]+)\.html", addon_name).group('name')
+        addon_name = re.search(r"info[0-9]+-(?P<name>.+)\.html", addon_name).group('name')
         return addon_name

@@ -1,5 +1,8 @@
 Changelog
 
+* 9/24/2019
+Fix WoWInterface site to accept any characters for the addon name instead of a more rigid regex.
+
 * 9/23/2019
 Add message for when Curse is being a jerk and blocking your requests.
 
