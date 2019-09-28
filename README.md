@@ -8,20 +8,22 @@ _Now supporting both retail and classic addon management!_
 
 ## First-time setup
 
-You must have a version of [Python](https://www.python.org/) 3.6+.
+### System dependencies
+- You must have a version of [Python](https://www.python.org/) 3.6+.
 
-_If you know how to manage Python packages and virtual environments, you can skip this section._
+- You must have [Node.js](https://nodejs.org/en/) installed (for Curse and WoWAce addons only).
+    - Used by `cfscrape` to circumvent the Cloudflare _"bot-detection"_ found on CurseForge sites.
+
+### Python module dependencies
 
 You should already have `pip` included with your Python installation. This is the default package manager for Python.
 If not, download the latest version of Python  for your platform, with `pip` bundled.
 
-
-### Installing the dependencies
-
-This utility has two external dependencies:
+This utility has three Python module dependencies:
 
 - The [requests](https://pypi.org/project/requests/) module, for making HTTP requests
 - The [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/) module, for HTML document parsing
+- The [cfscrape](https://pypi.org/project/cfscrape/) module, for bypassing Curse's bot-detection measures
 
 It's recommended you manage this with [`pipenv`](https://github.com/pypa/pipenv). All you need to do is run the following to install `pipenv` and the dependencies:
 
