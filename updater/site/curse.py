@@ -1,6 +1,6 @@
 import re
 
-import requests
+import cfscrape
 
 from updater.site.abstract_site import AbstractSite, SiteError
 from updater.site.enum import GameVersion
@@ -11,8 +11,10 @@ class Curse(AbstractSite):
     _OLD_URL = 'https://mods.curse.com/addons/wow/'
     _OLD_PROJECT_URL = 'https://wow.curseforge.com/projects/'
 
+    session = cfscrape.create_scraper("https://www.curseforge.com/")
+
     def __init__(self, url: str, game_version: GameVersion):
-        url = Curse._convert_old_curse_urls(url)
+        url = self._convert_old_curse_urls(url)
         super().__init__(url, game_version)
 
     @classmethod
@@ -21,7 +23,7 @@ class Curse(AbstractSite):
 
     def find_zip_url(self):
         try:
-            page = requests.get(self.url)
+            page = Curse.session.get(self.url)
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
             main_zip_url, *classic_zip_url = re.findall(
@@ -35,10 +37,9 @@ class Curse(AbstractSite):
 
     def get_latest_version(self):
         try:
-            page = requests.get(self.url)
+            page = Curse.session.get(self.url)
             if page.status_code in [403, 503]:
-                print("Curse is temporarily blocking requests because it thinks you are a bot... please try later. "
-                      "Consider finding this addon on WoWInterface or GitHub.")
+                print("Curse is blocking requests because it thinks you are a bot... please try later.")
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
             # the first one encountered will be the WoW retail version
@@ -56,7 +57,7 @@ class Curse(AbstractSite):
             try:
                 # Some old URL's may point to nonexistent pages. Rather than guess at what the new
                 # name and URL is, just try to load the old URL and see where Curse redirects us to.
-                page = requests.get(url)
+                page = Curse.session.get(url)
                 page.raise_for_status()
                 return page.url
             except Exception as e:

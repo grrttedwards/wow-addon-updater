@@ -94,7 +94,7 @@ class AddonManager:
 
             try:
                 zip_url = site.find_zip_url()
-                addon_zip = self.get_addon_zip(zip_url)
+                addon_zip = self.get_addon_zip(site.session, zip_url)
                 self.extract_to_addons(addon_zip, subfolder, site)
             except HTTPError:
                 print(f"Failed to download zip for [{addon_name}]")
@@ -112,8 +112,8 @@ class AddonManager:
         addon_entry = [addon_name, addon_url, installed_version, latest_version]
         self.manifest.append(addon_entry)
 
-    def get_addon_zip(self, zip_url):
-        r = requests.get(zip_url, stream=True)
+    def get_addon_zip(self, session: requests.Session, zip_url):
+        r = session.get(zip_url, stream=True)
         r.raise_for_status()  # Raise an exception for HTTP errors
         return zipfile.ZipFile(BytesIO(r.content))
 

@@ -9,6 +9,8 @@ from updater.site.enum import GameVersion
 class GitHub(AbstractSite):
     _URL = 'https://github.com/'
 
+    session = requests.session()
+
     def __init__(self, url: str):
         if '/tree/master' not in url:
             url = (url + '/tree/master')
@@ -23,7 +25,7 @@ class GitHub(AbstractSite):
 
     def get_latest_version(self):
         try:
-            response = requests.get(self.url)
+            response = GitHub.session.get(self.url)
             response.raise_for_status()
             content = str(response.content)
             version = re.search(
