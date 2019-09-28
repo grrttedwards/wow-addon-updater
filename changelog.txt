@@ -1,5 +1,8 @@
 Changelog
 
+* 9/28/2019
+Integrated cfscrape as an anti-measure for Cloudflare bot-detection, for Curse and WoWAce. Node.js is now a requirement for Curse-based sites.
+
 * 9/24/2019
 Fix WoWInterface site to accept any characters for the addon name instead of a more rigid regex.
 
