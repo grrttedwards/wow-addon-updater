@@ -9,6 +9,8 @@ from updater.site.enum import GameVersion
 class WoWInterface(AbstractSite):
     _URL = 'https://www.wowinterface.com/downloads/'
 
+    session = requests.session()
+
     def __init__(self, url: str, game_version: GameVersion):
         super().__init__(url, game_version)
 
@@ -19,7 +21,7 @@ class WoWInterface(AbstractSite):
     def find_zip_url(self):
         downloadpage = self.url.replace('info', 'download')
         try:
-            page = requests.get(downloadpage + '/download')
+            page = WoWInterface.session.get(downloadpage + '/download')
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
             index_of_ziploc = content_string.find('Problems with the download? <a href="') + 37  # first char of the url
@@ -30,7 +32,7 @@ class WoWInterface(AbstractSite):
 
     def get_latest_version(self):
         try:
-            page = requests.get(self.url)
+            page = WoWInterface.session.get(self.url)
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
             index_of_ver = content_string.find('id="version"') + 22  # first char of the version string

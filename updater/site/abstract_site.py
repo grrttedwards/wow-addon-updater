@@ -8,6 +8,9 @@ class SiteError(Exception):
 
 
 class AbstractSite(ABC):
+    # each implementation should create a static session for itself
+    session = None
+
     def __init__(self, url: str, game_version: GameVersion):
         self.url = url
         self.game_version = game_version

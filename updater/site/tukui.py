@@ -9,6 +9,8 @@ class Tukui(AbstractSite):
     _URL = 'https://git.tukui.org/elvui/'
     latest_version = None
 
+    session = requests.session()
+
     def __init__(self, url: str):
         super().__init__(url, GameVersion.agnostic)
 
@@ -25,7 +27,7 @@ class Tukui(AbstractSite):
         if self.latest_version:
             return self.latest_version
         try:
-            response = requests.get(self.url + '/-/tags')
+            response = Tukui.session.get(self.url + '/-/tags')
             response.raise_for_status()
             tags_page = BeautifulSoup(response.text, 'html.parser')
             version = tags_page.find('div', {'class': 'tags'}).find('a').string
