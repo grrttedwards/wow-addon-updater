@@ -16,8 +16,10 @@ _Now supporting both retail and classic addon management!_
 
 ### Python module dependencies
 
-You should already have `pip` included with your Python installation. This is the default package manager for Python.
-If not, download the latest version of Python  for your platform, with `pip` bundled.
+You should already have `pip` included with your Python installation.
+This is the default package manager for Python.
+You can check by running `pip --version` on the command line.
+If it's not there, download the latest version of Python for your platform, and check the box during installation to include `pip`.
 
 This utility has three Python module dependencies:
 
@@ -25,7 +27,7 @@ This utility has three Python module dependencies:
 - The [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/) module, for HTML document parsing
 - The [cfscrape](https://pypi.org/project/cfscrape/) module, for bypassing Curse's bot-detection measures
 
-It's recommended you manage this with [`pipenv`](https://github.com/pypa/pipenv). All you need to do is run the following to install `pipenv` and the dependencies:
+It's recommended you manage this with [`pipenv`](https://github.com/pypa/pipenv). All you need to do is run the following on the command line to install `pipenv` and the dependencies:
 
 ```bash
 cd wow-addon-updater/
