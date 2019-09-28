@@ -14,7 +14,7 @@ class Curse(AbstractSite):
     session = cfscrape.create_scraper("https://www.curseforge.com/")
 
     def __init__(self, url: str, game_version: GameVersion):
-        url = self._convert_old_curse_urls(url)
+        url = Curse._convert_old_curse_urls(url)
         super().__init__(url, game_version)
 
     @classmethod
