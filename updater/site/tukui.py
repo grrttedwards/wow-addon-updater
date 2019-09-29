@@ -6,17 +6,16 @@ from updater.site.enum import GameVersion
 
 
 class Tukui(AbstractSite):
-    _URL = 'https://git.tukui.org/elvui/'
-    latest_version = None
+    _URLS = [
+        'https://git.tukui.org/elvui/'
+    ]
 
     session = requests.session()
 
+    latest_version = None
+
     def __init__(self, url: str):
         super().__init__(url, GameVersion.agnostic)
-
-    @classmethod
-    def get_supported_urls(cls) -> [str]:
-        return [cls._URL]
 
     def find_zip_url(self):
         version = self.get_latest_version()

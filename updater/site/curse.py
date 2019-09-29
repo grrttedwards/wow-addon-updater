@@ -7,19 +7,21 @@ from updater.site.enum import GameVersion
 
 
 class Curse(AbstractSite):
-    _URL = 'https://www.curseforge.com/wow/addons/'
     _OLD_URL = 'https://mods.curse.com/addons/wow/'
     _OLD_PROJECT_URL = 'https://wow.curseforge.com/projects/'
+
+    _URLS = [
+        'https://www.curseforge.com/wow/addons/',
+        'https://curseforge.com/wow/addons/',
+        _OLD_URL,
+        _OLD_PROJECT_URL
+    ]
 
     session = cfscrape.create_scraper("https://www.curseforge.com/")
 
     def __init__(self, url: str, game_version: GameVersion):
         url = Curse._convert_old_curse_urls(url)
         super().__init__(url, game_version)
-
-    @classmethod
-    def get_supported_urls(cls):
-        return [cls._OLD_URL, cls._OLD_PROJECT_URL, cls._URL]
 
     def find_zip_url(self):
         try:

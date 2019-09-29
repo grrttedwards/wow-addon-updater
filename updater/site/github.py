@@ -7,7 +7,10 @@ from updater.site.enum import GameVersion
 
 
 class GitHub(AbstractSite):
-    _URL = 'https://github.com/'
+    _URLS = [
+        'https://www.github.com/',
+        'https://github.com/'
+    ]
 
     session = requests.session()
 
@@ -15,10 +18,6 @@ class GitHub(AbstractSite):
         if '/tree/master' not in url:
             url = (url + '/tree/master')
         super().__init__(url, GameVersion.agnostic)
-
-    @classmethod
-    def get_supported_urls(cls):
-        return [cls._URL]
 
     def find_zip_url(self):
         return self.url.replace('/tree/', '/archive/', 1) + '.zip'

@@ -7,16 +7,14 @@ from updater.site.enum import GameVersion
 
 
 class WoWInterface(AbstractSite):
-    _URL = 'https://www.wowinterface.com/downloads/'
-
+    _URLS = [
+        'https://www.wowinterface.com/downloads',
+        'https://wowinterface.com/downloads'
+    ]
     session = requests.session()
 
     def __init__(self, url: str, game_version: GameVersion):
         super().__init__(url, game_version)
-
-    @classmethod
-    def get_supported_urls(cls) -> [str]:
-        return [cls._URL]
 
     def find_zip_url(self):
         downloadpage = self.url.replace('info', 'download')

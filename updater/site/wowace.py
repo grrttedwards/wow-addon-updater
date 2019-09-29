@@ -7,7 +7,10 @@ from updater.site.enum import GameVersion
 
 
 class WoWAce(AbstractSite):
-    _URL = 'https://www.wowace.com/projects/'
+    _URLS = [
+        'https://www.wowace.com/projects/',
+        'https://wowace.com/projects/'
+    ]
 
     session = cfscrape.create_scraper()
 
@@ -15,10 +18,6 @@ class WoWAce(AbstractSite):
         if game_version != GameVersion.retail:
             raise NotImplementedError("Updating classic addons are not yet supported for WoWAce.")
         super().__init__(url, game_version)
-
-    @classmethod
-    def get_supported_urls(cls):
-        return [cls._URL]
 
     def find_zip_url(self):
         return self.url + '/files/latest'
