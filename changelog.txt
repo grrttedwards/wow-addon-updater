@@ -1,5 +1,8 @@
 Changelog
 
+* 9/29/2019 - v1.2.1
+Relaxed the pattern match for most URLs which may not be prefixed with "www.".
+
 * 9/28/2019 - v1.2.0
 Integrated cfscrape as an anti-measure for Cloudflare bot-detection, for Curse and WoWAce. Node.js is now a requirement for Curse-based sites.
 
