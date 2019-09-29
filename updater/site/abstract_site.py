@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import requests
+
 from updater.site.enum import GameVersion
 
 
@@ -8,8 +10,10 @@ class SiteError(Exception):
 
 
 class AbstractSite(ABC):
+    # each implementation should declare a static _URLS list of
+    _URLS: [str] = None
     # each implementation should create a static session for itself
-    session = None
+    session: requests.Session = None
 
     def __init__(self, url: str, game_version: GameVersion):
         self.url = url
@@ -20,12 +24,11 @@ class AbstractSite(ABC):
         return any(supported_url in url for supported_url in cls.get_supported_urls())
 
     @classmethod
-    @abstractmethod
     def get_supported_urls(cls) -> [str]:
-        # ABC for some reason won't enforce implementing this, perhaps
-        # because it only checks when the class is instantiated?
-        raise TypeError(f"Can't instantiate abstract class {cls.__name__}"
-                        " with abstract methods get_supported_urls")
+        if not cls._URLS:
+            raise NotImplementedError(f"Can't instantiate class {cls.__name__}"
+                                      " without list of supported URLs cls._URLS")
+        return cls._URLS
 
     @abstractmethod
     def find_zip_url(self) -> str:
