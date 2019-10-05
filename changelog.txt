@@ -1,5 +1,8 @@
 Changelog
 
+* 10/5/2019 - v1.3.0
+Add the ability to use a Windows-style addon directory path when using Windows, but calling the code from within Windows Subsystem for Linux.
+
 * 10/5/2019 - v1.2.2
 Fix for a problem where an existing installed addon can be deleted, and the new extract fails, which essentially deletes the addon from the system.
 
