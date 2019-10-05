@@ -1,5 +1,8 @@
 Changelog
 
+* 10/5/2019 - v1.2.2
+Fix for a problem where an existing installed addon can be deleted, and the new extract fails, which essentially deletes the addon from the system.
+
 * 9/29/2019 - v1.2.1
 Relaxed the pattern match for most URLs which may not be prefixed with "www.".
 
