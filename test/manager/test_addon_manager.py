@@ -78,6 +78,14 @@ class TestAddonManager(unittest.TestCase):
         self.manager.update_addon(TEST_URL)
         self.assertFailedInstall()
 
+    """ 
+    Issue #80 https://github.com/grrttedwards/wow-addon-updater/issues/80
+    """
+    def test_subfolder_extraction_fail_doesnt_install_addon(self):
+        self.manager.extract_to_addons = Mock(side_effect=KeyError())
+        self.manager.update_addon(TEST_URL)
+        self.assertFailedInstall()
+
     def test_extract_archive_subfolder(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             self.extractAddon('some-fake-addon.zip', temp_dir, curse.Curse("", GameVersion.retail),
@@ -105,6 +113,18 @@ class TestAddonManager(unittest.TestCase):
             self.assertExtractionSuccess(temp_dir, 'FolderA', 'sub-folder', 'file1.txt')
             self.assertExtractionSuccess(temp_dir, 'FolderB', 'fileB.txt')
             self.assertExtractionSuccess(temp_dir, 'FolderC', 'fileC.txt')
+
+    """ 
+    Issue #80 https://github.com/grrttedwards/wow-addon-updater/issues/80
+    """
+    def test_zip_subfolder_extract_fail_raises_error(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            def extract_should_fail():
+                return self.extractAddon('some-fake-addon.zip', temp_dir, None, subfolder='existing-addon')
+            existing_addon_dir = os.path.join(temp_dir, 'existing-addon')
+            os.mkdir(existing_addon_dir)
+            self.assertRaises(KeyError, extract_should_fail)
+            self.assertTrue(os.path.isdir(existing_addon_dir))
 
 
 if __name__ == '__main__':
