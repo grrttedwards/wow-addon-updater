@@ -1,5 +1,7 @@
 import configparser
+import platform
 import shutil
+import subprocess
 import tempfile
 import threading
 import zipfile
@@ -17,6 +19,13 @@ from updater.site.enum import GameVersion
 def error(message: str):
     print(message)
     exit(1)
+
+
+def normalize_path(path: str) -> str:
+    env = platform.platform().lower()
+    if 'linux' in env and 'microsoft' in env:
+        return subprocess.check_output(['wslpath', path], text=True)
+    return path
 
 
 class AddonManager:
@@ -43,6 +52,7 @@ class AddonManager:
         if not isfile(self.addon_list_file):
             error(f"Failed to read addon list file ({self.addon_list_file}). Are you sure the file exists?")
 
+        self.wow_addon_location = normalize_path(self.wow_addon_location)
         if not isdir(self.wow_addon_location):
             error(f"Could not find addon directory ({self.wow_addon_location}). Are you sure it exists?")
 
