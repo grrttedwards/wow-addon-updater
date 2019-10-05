@@ -100,7 +100,7 @@ class AddonManager:
                 print(f"Failed to download zip for [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
             except KeyError:
-                print(f"Failed to find subfolder [{subfolder}] in archive for [{addon_name}]")
+                print(f"Failed to extract subfolder [{subfolder}] in archive for [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
             except SiteError as e:
                 print(e)
@@ -131,6 +131,8 @@ class AddonManager:
                     destination_dir = join(self.wow_addon_location, subfolder)
                     temp_source_dir = join(temp_dir, top_level_folder, subfolder)
                 zipped.extractall(path=temp_dir)
+                if not isdir(temp_source_dir):
+                    raise KeyError()
                 if isdir(destination_dir):
                     shutil.rmtree(destination_dir)
                 shutil.copytree(src=temp_source_dir, dst=destination_dir)
