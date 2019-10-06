@@ -33,8 +33,6 @@ class TestCurse(unittest.TestCase):
         for url, version_regex in version_test_data:
             for game_version in GameVersion.__members__.values():
                 with self.subTest((game_version, url, version_regex)):
-                    if 'weakauras' in url and game_version is GameVersion.classic:
-                        return  # weakauras doesn't have a classic download link yet
                     c = curse.Curse(url, game_version)
                     latest_version = c.get_latest_version()
                     # something like 4.5.6, or v163
