@@ -12,42 +12,45 @@ class WoWAce(AbstractSite):
     ]
 
     session = cfscrape.create_scraper()
-    latest_version = None
-    page = None
 
     def __init__(self, url: str, game_version: GameVersion):
         super().__init__(url, game_version)
+        self._page = None
+        self._latest_version = None
 
     def find_zip_url(self):
-        return f"https://www.wowace.com{self._get_page().find('a', text=self.get_latest_version()).get('href')}/download"
+        return f"https://www.wowace.com{self.get_page().find('a', text=self.get_latest_version()).get('href')}/download"
 
     def get_latest_version(self):
-        if self.latest_version:
-            return self.latest_version
-        
+        if self._latest_version:
+            return self._latest_version
+
         try:
-            page = self._get_page()
-            recent_wrappers = page.find_all('ul', {'class': 'cf-recentfiles'}) 
+            page = self.get_page()
+            recent_wrappers = page.find_all('ul', {'class': 'cf-recentfiles'})
 
             if (len(recent_wrappers) == 1) or (self.game_version == GameVersion.retail):
-                version = recent_wrappers[0].find('a', {'data-action': 'file-link'}).text
+                version = recent_wrappers[0].find(
+                    'a', {'data-action': 'file-link'}).text
             else:
-                version = recent_wrappers[1].find('a', {'data-action': 'file-link'}).text
+                version = recent_wrappers[1].find(
+                    'a', {'data-action': 'file-link'}).text
 
-            self.latest_version = version
+            self._latest_version = version
             return version
         except Exception as e:
             raise self.version_error() from e
-    
-    def _get_page(self):
-        if self.page:
-            return self.page
+
+    def get_page(self):
+        if self._page:
+            return self._page
         try:
             page = WoWAce.session.get(self.url)
             if page.status_code in [403, 503]:
-                print('WoWAce (Curse) is blocking requests because it thinks you are a bot... please try later.')
+                print(
+                    'WoWAce (Curse) is blocking requests because it thinks you are a bot... please try later.')
             page.raise_for_status()  # Raise an exception for HTTP errors
-            self.page = BeautifulSoup(page.text, 'html.parser')
-            return self.page
+            self._page = BeautifulSoup(page.text, 'html.parser')
+            return self._page
         except Exception as e:
             raise self.version_error() from e
