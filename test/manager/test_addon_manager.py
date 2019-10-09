@@ -7,6 +7,7 @@ from unittest.mock import patch, Mock
 from test import testutils
 from updater.manager import addon_manager
 from updater.manager.addon_manager import AddonManager
+from updater.manager.config import Config
 from updater.site import curse, github
 from updater.site.abstract_site import AbstractSite, SiteError
 from updater.site.enum import GameVersion
@@ -35,13 +36,22 @@ EXP_MANIFEST = [[EXP_NAME, TEST_URL, EXP_INST_VERSION, EXP_LATEST_VERSION]]
 class TestAddonManager(unittest.TestCase):
     def setUp(self):
         self.mock_site = MockSite(TEST_URL, GameVersion.agnostic)
-        patcher = patch('updater.manager.addon_manager.site_handler.get_handler')
+        patcher = patch(
+            'updater.manager.addon_manager.site_handler.get_handler')
         patcher.start().return_value = self.mock_site
-        with patch.object(addon_manager.AddonManager, "__init__", lambda x, y: None):
+        with patch.object(addon_manager.AddonManager, '__init__', lambda x, y: None):
             self.manager = addon_manager.AddonManager('config.ini')
         self.manager.manifest = []
-        self.manager.get_installed_version = Mock(return_value=EXP_INST_VERSION)
-        self.manager.game_version = GameVersion.retail
+        self.manager.get_installed_version = Mock(
+            return_value=EXP_INST_VERSION)
+
+        with patch.object(Config, '__init__', lambda x, y: None):
+            self.manager.config = Config('config.ini')
+
+        self.manager.config.game_version = GameVersion.retail
+        self.manager.config.wow_addon_location = ''
+        self.manager.config.installed_vers_file = 'installed.ini'
+        self.manager.config.addon_list_file = 'addons.txt'
 
         self.addCleanup(patcher.stop)
 
@@ -50,7 +60,7 @@ class TestAddonManager(unittest.TestCase):
                              self.manager.manifest)
 
     def extractAddon(self, filename, temp_dir, site, subfolder=None):
-        self.manager.wow_addon_location = temp_dir
+        self.manager.config.wow_addon_location = temp_dir
         mock_zipfile = zipfile.ZipFile(testutils.get_file(filename))
         self.manager.extract_to_addons(mock_zipfile, subfolder, site)
 
@@ -59,9 +69,11 @@ class TestAddonManager(unittest.TestCase):
             sub_args = args[:index]
             if index == len(args):
                 # the last one should be a file, not directory
-                self.assertTrue(os.path.isfile(os.path.join(temp_dir, *sub_args)))
+                self.assertTrue(os.path.isfile(
+                    os.path.join(temp_dir, *sub_args)))
             else:
-                self.assertTrue(os.path.isdir(os.path.join(temp_dir, *sub_args)))
+                self.assertTrue(os.path.isdir(
+                    os.path.join(temp_dir, *sub_args)))
 
     def test_download_fail_doesnt_install_addon(self):
         self.manager.get_addon_zip = Mock(side_effect=Exception())
@@ -81,6 +93,7 @@ class TestAddonManager(unittest.TestCase):
     """ 
     Issue #80 https://github.com/grrttedwards/wow-addon-updater/issues/80
     """
+
     def test_subfolder_extraction_fail_doesnt_install_addon(self):
         self.manager.extract_to_addons = Mock(side_effect=KeyError())
         self.manager.update_addon(TEST_URL)
@@ -88,35 +101,44 @@ class TestAddonManager(unittest.TestCase):
 
     def test_extract_archive_subfolder(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.extractAddon('some-fake-addon.zip', temp_dir, curse.Curse("", GameVersion.retail),
+            self.extractAddon('some-fake-addon.zip', temp_dir, curse.Curse('', GameVersion.retail),
                               subfolder='sub-folder')
             self.assertExtractionSuccess(temp_dir, 'sub-folder', 'file1.txt')
 
     def test_extract_entire_archive(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.extractAddon('some-fake-addon.zip', temp_dir, curse.Curse("", GameVersion.retail))
-            self.assertExtractionSuccess(temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')
+            self.extractAddon('some-fake-addon.zip', temp_dir,
+                              curse.Curse('', GameVersion.retail))
+            self.assertExtractionSuccess(
+                temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')
 
     def test_extract_entire_archive_github_master_zipball(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.extractAddon('some-fake-addon-master.zip', temp_dir, github.GitHub(""))
-            self.assertExtractionSuccess(temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')
+            self.extractAddon('some-fake-addon-master.zip',
+                              temp_dir, github.GitHub(''))
+            self.assertExtractionSuccess(
+                temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')
 
     def test_extract_entire_archive_curse(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.extractAddon('some-fake-addon-from-curse.zip', temp_dir, curse.Curse("", GameVersion.retail))
-            self.assertExtractionSuccess(temp_dir, 'AddonName', 'sub-folder', 'file1.txt')
+            self.extractAddon('some-fake-addon-from-curse.zip',
+                              temp_dir, curse.Curse('', GameVersion.retail))
+            self.assertExtractionSuccess(
+                temp_dir, 'AddonName', 'sub-folder', 'file1.txt')
 
     def test_extract_archive_with_multiple_folders(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.extractAddon('some-fake-addon-with-many-folders.zip', temp_dir, curse.Curse("", GameVersion.retail))
-            self.assertExtractionSuccess(temp_dir, 'FolderA', 'sub-folder', 'file1.txt')
+            self.extractAddon('some-fake-addon-with-many-folders.zip',
+                              temp_dir, curse.Curse('', GameVersion.retail))
+            self.assertExtractionSuccess(
+                temp_dir, 'FolderA', 'sub-folder', 'file1.txt')
             self.assertExtractionSuccess(temp_dir, 'FolderB', 'fileB.txt')
             self.assertExtractionSuccess(temp_dir, 'FolderC', 'fileC.txt')
 
     """ 
     Issue #80 https://github.com/grrttedwards/wow-addon-updater/issues/80
     """
+
     def test_zip_subfolder_extract_fail_raises_error(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             def extract_should_fail():
