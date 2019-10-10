@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
 import requests
+import cloudscraper
+import subprocess
 
 from updater.site.enum import GameVersion
 
@@ -29,6 +31,19 @@ class AbstractSite(ABC):
             raise NotImplementedError(f"Can't instantiate class {cls.__name__}"
                                       " without list of supported URLs cls._URLS")
         return cls._URLS
+
+    @classmethod
+    def get_scraper(cls):
+        try:
+            subprocess.check_output(["node", "-v"])
+            node_supported = True
+        except Exception:
+            node_supported = False
+
+        if node_supported:
+            return cloudscraper.create_scraper()
+        else:
+            return cloudscraper.create_scraper(interpreter="nodejs")
 
     @abstractmethod
     def find_zip_url(self) -> str:

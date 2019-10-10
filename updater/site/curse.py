@@ -1,7 +1,5 @@
 import re
 
-import cfscrape
-
 from updater.site.abstract_site import AbstractSite, SiteError
 from updater.site.enum import GameVersion
 
@@ -17,7 +15,7 @@ class Curse(AbstractSite):
         _OLD_PROJECT_URL
     ]
 
-    session = cfscrape.create_scraper("https://www.curseforge.com/")
+    session = AbstractSite.get_scraper()
 
     def __init__(self, url: str, game_version: GameVersion):
         url = Curse._convert_old_curse_urls(url)
@@ -41,7 +39,8 @@ class Curse(AbstractSite):
         try:
             page = Curse.session.get(self.url)
             if page.status_code in [403, 503]:
-                print("Curse is blocking requests because it thinks you are a bot... please try later.")
+                print(
+                    "Curse is blocking requests because it thinks you are a bot... please try later.")
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
             # the first one encountered will be the WoW retail version
@@ -63,6 +62,7 @@ class Curse(AbstractSite):
                 page.raise_for_status()
                 return page.url
             except Exception as e:
-                raise SiteError(f"Failed to find the current page for old URL: {url}") from e
+                raise SiteError(
+                    f"Failed to find the current page for old URL: {url}") from e
         else:
             return url

@@ -1,4 +1,3 @@
-import cfscrape
 from bs4 import BeautifulSoup
 
 from updater.site.abstract_site import AbstractSite
@@ -11,7 +10,7 @@ class WoWAce(AbstractSite):
         'https://wowace.com/projects/'
     ]
 
-    session = cfscrape.create_scraper()
+    session = AbstractSite.get_scraper()
 
     def __init__(self, url: str, game_version: GameVersion):
         super().__init__(url, game_version)
