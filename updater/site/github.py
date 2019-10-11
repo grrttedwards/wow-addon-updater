@@ -1,6 +1,5 @@
-import re
-
 import requests
+from bs4 import BeautifulSoup
 
 from updater.site.abstract_site import AbstractSite
 from updater.site.enum import GameVersion
@@ -15,26 +14,23 @@ class GitHub(AbstractSite):
     session = requests.session()
 
     def __init__(self, url: str):
-        if '/tree/master' not in url:
-            url = (url + '/tree/master')
         super().__init__(url, GameVersion.agnostic)
 
     def find_zip_url(self):
-        return self.url.replace('/tree/', '/archive/', 1) + '.zip'
+        return self.url + '/archive/master.zip'
 
     def get_latest_version(self):
         try:
-            response = GitHub.session.get(self.url)
+            response = GitHub.session.get(self.url + '/commits/master')
             response.raise_for_status()
-            content = str(response.content)
-            version = re.search(
-                r"<a data-pjax.*?/commit/(?P<hash>.*?)\">",
-                content).group('hash')
-            return version[:7]  # truncate the hash to the first 7 digits
+            page = BeautifulSoup(response.text, 'html.parser')
+            commits = page.find(attrs={'class': 'repository-content'})
+            version = commits.find('a', {'class': ['sha', 'btn']}).get_text(strip=True)
+            return version
         except Exception as e:
             raise self.version_error() from e
 
     def get_addon_name(self):
         addon_name = AbstractSite.get_addon_name(self)
-        addon_name = re.search(r".*?/(?P<name>.+?)/", addon_name).group('name')
+        addon_name = addon_name.split('/')[-1]
         return addon_name
