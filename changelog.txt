@@ -1,5 +1,8 @@
 Changelog
 
+* 10/11/2019 - v1.4.1
+Fix for an issue involving subfolders and archives that aren't from git (GitHub, ElvUI). For example, you can now correctly extract single subfolders from Curse, etc.
+
 * 10/6/2019 - v1.4.0
 Add support for WowAce classic addons.
 
