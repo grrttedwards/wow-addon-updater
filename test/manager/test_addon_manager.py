@@ -88,7 +88,13 @@ class TestAddonManager(unittest.TestCase):
 
     def test_extract_archive_subfolder(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            self.extractAddon('some-fake-addon.zip', temp_dir, curse.Curse("", GameVersion.retail),
+            self.extractAddon('some-fake-addon-with-many-folders.zip', temp_dir, curse.Curse("", GameVersion.retail),
+                              subfolder='FolderA')
+            self.assertExtractionSuccess(temp_dir, 'FolderA', 'sub-folder', 'file1.txt')
+
+    def test_extract_archive_subfolder_git(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            self.extractAddon('some-fake-addon-master.zip', temp_dir, github.GitHub(""),
                               subfolder='sub-folder')
             self.assertExtractionSuccess(temp_dir, 'sub-folder', 'file1.txt')
 

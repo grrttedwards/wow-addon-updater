@@ -11,7 +11,7 @@ from os.path import isfile, isdir, join
 import requests
 from requests import HTTPError
 
-from updater.site import site_handler, github
+from updater.site import site_handler, github, tukui
 from updater.site.abstract_site import SiteError, AbstractSite
 from updater.site.enum import GameVersion
 
@@ -128,26 +128,32 @@ class AddonManager:
         return zipfile.ZipFile(BytesIO(r.content))
 
     def extract_to_addons(self, zipped: zipfile.ZipFile, subfolder, site: AbstractSite):
-        if isinstance(site, github.GitHub) or subfolder:
-            first_zip_member, *_ = zipped.namelist()
-            # sometimes zip files don't contain an entry for the top-level folder, so parse it from the first member
-            top_level_folder, *_ = first_zip_member.split('/')
-            with tempfile.TemporaryDirectory() as temp_dir:
-                # unfortunately include some github-specific folder logic here... think about how to refactor this
-                if '-master' in top_level_folder:
-                    destination_dir = join(self.wow_addon_location, top_level_folder.replace('-master', ''))
-                    temp_source_dir = join(temp_dir, top_level_folder)
-                if subfolder:
-                    destination_dir = join(self.wow_addon_location, subfolder)
-                    temp_source_dir = join(temp_dir, top_level_folder, subfolder)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            norm_src_dir = temp_dir
+            destination_dir = self.wow_addon_location
+
+            if isinstance(site, github.GitHub) or isinstance(site, tukui.Tukui):
+                first_zip_member, *_ = zipped.namelist()
+                # sometimes zips don't contain an entry for the top-level folder, so parse it from the first member
+                top_level_folder, *_ = first_zip_member.split('/')
+
+                destination_dir = join(self.wow_addon_location, top_level_folder.replace('-master', ''))
+                norm_src_dir = join(temp_dir, top_level_folder)
+
+            if subfolder:
+                destination_dir = join(self.wow_addon_location, subfolder)
+                norm_src_dir = join(norm_src_dir, subfolder)
+
+            if subfolder or isinstance(site, github.GitHub) or isinstance(site, tukui.Tukui):
                 zipped.extractall(path=temp_dir)
-                if not isdir(temp_source_dir):
+                if not isdir(norm_src_dir):
                     raise KeyError()
                 if isdir(destination_dir):
                     shutil.rmtree(destination_dir)
-                shutil.copytree(src=temp_source_dir, dst=destination_dir)
-        else:
-            zipped.extractall(path=self.wow_addon_location)
+                shutil.copytree(src=norm_src_dir, dst=destination_dir)
+            else:
+                # no subfolder and no folder renaming needed, just copy the entire archive contents as-is
+                zipped.extractall(path=self.wow_addon_location)
 
     def get_installed_version(self, addon_name):
         installed_vers = configparser.ConfigParser()
