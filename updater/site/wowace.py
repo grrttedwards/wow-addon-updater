@@ -1,4 +1,4 @@
-import cfscrape
+import cloudscraper
 from bs4 import BeautifulSoup
 
 from updater.site.abstract_site import AbstractSite
@@ -11,7 +11,7 @@ class WoWAce(AbstractSite):
         'https://wowace.com/projects/'
     ]
 
-    session = cfscrape.create_scraper()
+    session = cloudscraper.create_scraper()
     latest_version = None
     page = None
 
@@ -24,10 +24,10 @@ class WoWAce(AbstractSite):
     def get_latest_version(self):
         if self.latest_version:
             return self.latest_version
-        
+
         try:
             page = self._get_page()
-            recent_wrappers = page.find_all('ul', {'class': 'cf-recentfiles'}) 
+            recent_wrappers = page.find_all('ul', {'class': 'cf-recentfiles'})
 
             if (len(recent_wrappers) == 1) or (self.game_version == GameVersion.retail):
                 version = recent_wrappers[0].find('a', {'data-action': 'file-link'}).text
@@ -38,7 +38,7 @@ class WoWAce(AbstractSite):
             return version
         except Exception as e:
             raise self.version_error() from e
-    
+
     def _get_page(self):
         if self.page:
             return self.page

@@ -1,6 +1,6 @@
 import re
 
-import cfscrape
+import cloudscraper
 
 from updater.site.abstract_site import AbstractSite, SiteError
 from updater.site.enum import GameVersion
@@ -17,7 +17,7 @@ class Curse(AbstractSite):
         _OLD_PROJECT_URL
     ]
 
-    session = cfscrape.create_scraper("https://www.curseforge.com/")
+    session = cloudscraper.create_scraper("https://www.curseforge.com/")
 
     def __init__(self, url: str, game_version: GameVersion):
         url = Curse._convert_old_curse_urls(url)

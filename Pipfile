@@ -9,6 +9,6 @@ coverage = "*"
 [packages]
 requests = "*"
 beautifulsoup4 = "*"
-cfscrape = "*"
+cloudscraper = "*"
 
 [requires]
