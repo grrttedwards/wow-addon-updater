@@ -11,9 +11,6 @@ _Now supporting both retail and classic addon management!_
 ### System dependencies
 - You must have a version of [Python](https://www.python.org/) 3.6+.
 
-- You must have [Node.js](https://nodejs.org/en/) installed (for Curse and WoWAce addons only).
-    - Used by `cfscrape` to circumvent the Cloudflare _"bot-detection"_ found on CurseForge sites.
-
 ### Python module dependencies
 
 You should already have `pip` included with your Python installation.
@@ -25,7 +22,7 @@ This utility has three Python module dependencies:
 
 - The [requests](https://pypi.org/project/requests/) module, for making HTTP requests
 - The [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/) module, for HTML document parsing
-- The [cfscrape](https://pypi.org/project/cfscrape/) module, for bypassing Curse's bot-detection measures
+- The [cloudscraper](https://pypi.org/project/cloudscraper/) module, for bypassing Curse's bot-detection measures
 
 It's recommended you manage this with [`pipenv`](https://github.com/pypa/pipenv). All you need to do is run the following on the command line to install `pipenv` and the dependencies:
 
