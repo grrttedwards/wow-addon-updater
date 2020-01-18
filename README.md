@@ -9,7 +9,8 @@ _Now supporting both retail and classic addon management!_
 ## First-time setup
 
 ### System dependencies
-- You must have a version of [Python](https://www.python.org/) 3.6+.
+- You must have a version of [Python](https://www.python.org/) 3.7.4+.
+Basically, any new version of Python.
 
 ### Python module dependencies
 
