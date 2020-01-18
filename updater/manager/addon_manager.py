@@ -3,9 +3,9 @@ import platform
 import shutil
 import subprocess
 import tempfile
-import threading
 import zipfile
 from io import BytesIO
+from multiprocessing.pool import ThreadPool
 from os.path import isfile, isdir, join
 
 import requests
@@ -57,21 +57,18 @@ class AddonManager:
             error(f"Could not find addon directory ({self.wow_addon_location}). Are you sure it exists?")
 
     def update_all(self):
-        threads = []
-
         with open(self.addon_list_file, 'r') as fin:
             addon_entries = fin.read().splitlines()
 
         # filter any blank lines or lines commented with an octothorp (#)
         addon_entries = [entry for entry in addon_entries if entry and not entry.startswith('#')]
 
+        # chose an arbitrary reasonable number of threads
+        pool = ThreadPool(10)
         for addon_entry in addon_entries:
-            thread = threading.Thread(target=self.update_addon, args=(addon_entry,))
-            threads.append(thread)
-        for thread in threads:
-            thread.start()
-        for thread in threads:
-            thread.join()
+            pool.apply_async(self.update_addon, args=(addon_entry,))
+        pool.close()
+        pool.join()
 
         self.set_installed_versions()
         self.display_results()
