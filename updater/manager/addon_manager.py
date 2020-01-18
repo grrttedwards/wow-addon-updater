@@ -95,10 +95,8 @@ class AddonManager:
             latest_version = AddonManager._UNAVAILABLE
 
         installed_version = self.get_installed_version(addon_name)
-        if latest_version == AddonManager._UNAVAILABLE:
+        if latest_version in [AddonManager._UNAVAILABLE, installed_version]:
             pass
-        elif latest_version == installed_version:
-            print(f"{addon_name} version {installed_version} is up to date.\n")
         else:
             print(f"Installing/updating addon: {addon_name} to version: {latest_version}...\n")
 
