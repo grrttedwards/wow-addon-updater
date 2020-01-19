@@ -2,9 +2,14 @@
 
 This utility provides an alternative to the Twitch/Curse client for management and updating of addons for World of Warcraft. The Twitch/Curse client is rather bloated and buggy, and comes with many features that most users will not ever use in the first place. This utility, however, is lightweight and makes it very easy to manage which addons are being updated, and to update them just by running a python script.
 
-_Now supporting both retail and classic addon management!_
+_Supporting both retail and classic addons!_
 
 [![Build Status](https://travis-ci.com/grrttedwards/wow-addon-updater.svg?branch=master)](https://travis-ci.com/grrttedwards/wow-addon-updater)
+
+## Downloading
+The best way to get the latest stable code is to head to the [Latest Releases page](https://github.com/grrttedwards/wow-addon-updater/releases/latest), or selecting the GitHub `Releases` tab above.
+
+If you're feeling adventurous, you can also download the latest `master` branch by pressing the big green `Clone or download` button and selecting `Download ZIP`.
 
 ## First-time setup
 
