@@ -1,4 +1,7 @@
 Changelog
+* 01/19/2020 - v1.5.2
+Improve the version check to actually check for latest releases and compare a new VERSION file. Should alert users only when a new release has been published, not just any change to master.
+
 * 01/19/2020 - v1.5.1
 Forgot to update changelog for v1.5.0, oops.
 Bring in new versions of dependencies and unblock users of Curse, who has made more breaking anti-scraper changes.
