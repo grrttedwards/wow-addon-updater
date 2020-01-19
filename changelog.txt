@@ -1,4 +1,7 @@
 Changelog
+* 01/19/2020 - v1.5.1
+Forgot to update changelog for v1.5.0, oops.
+Bring in new versions of dependencies and unblock users of Curse, who has made more breaking anti-scraper changes.
 
 * 10/11/2019 - v1.4.2
 Use a new internal method of fetching GitHub addons which appears to be more reliable, and fails less often.
