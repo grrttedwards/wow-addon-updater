@@ -1,33 +1,39 @@
 import argparse
-from os.path import isfile
 
 import requests
 
 from updater.manager.addon_manager import AddonManager
 
-CHANGELOG_URL = 'https://raw.githubusercontent.com/grrttedwards/wow-addon-updater/master/changelog.txt'
-CHANGELOG_FILE = 'changelog.txt'
-NEW_UPDATE_MESSAGE = """
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-A new update is available! Check it out at https://github.com/grrttedwards/wow-addon-updater/releases
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-"""
+VERSION_FILE = 'VERSION'
+LATEST_VERSION_URL = 'https://github.com/grrttedwards/wow-addon-updater/releases/latest'
 
 
 def confirm_exit():
-    input('\nPress the Enter key to exit')
+    input("\nPress the Enter key to exit")
     exit(0)
 
 
+def get_update_message(version):
+    separator = '~' * len(LATEST_VERSION_URL)
+    message = f"A new update ({version}) is available! Check it out at".center(len(LATEST_VERSION_URL))
+
+    lines = ['\n', separator, message, LATEST_VERSION_URL, separator]
+
+    return '\n'.join(lines)
+
+
 def check_version():
-    if isfile(CHANGELOG_FILE):
-        downloaded_changelog = requests.get(CHANGELOG_URL).text
-        with open(CHANGELOG_FILE, mode='r') as f:
-            current_changelog = f.read()
-        if downloaded_changelog != current_changelog:
-            print(NEW_UPDATE_MESSAGE)
+    try:
+        with open(VERSION_FILE, mode='r') as f:
+            current_version = f.read().strip('\n')
+        # follow the latest release URL and it redirects and returns a URL like
+        # https://github.com/grrttedwards/wow-addon-updater/releases/tag/v1.5.1
+        latest_version = requests.get(LATEST_VERSION_URL).url.split('/')[-1]
+        if current_version != latest_version:
+            print(get_update_message(latest_version))
+    except Exception as e:
+        print("Something went wrong finding the latest app version! "
+              "Please report this on GitHub and check for a new release.")
 
 
 def main():
