@@ -1,3 +1,3 @@
 @echo off
-pipenv run python -m updater
+poetry run python -m updater
 PAUSE

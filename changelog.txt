@@ -1,4 +1,8 @@
 Changelog
+
+* 02/04/2020 - v1.5.3
+Replaced Pipenv with poetry.
+
 * 01/19/2020 - v1.5.2
 Improve the version check to actually check for latest releases and compare a new VERSION file. Should alert users only when a new release has been published, not just any change to master.
 

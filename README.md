@@ -30,15 +30,15 @@ This utility has three Python module dependencies:
 - The [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/) module, for HTML document parsing
 - The [cloudscraper](https://pypi.org/project/cloudscraper/) module, for bypassing Curse's bot-detection measures
 
-It's recommended you manage this with [`pipenv`](https://github.com/pypa/pipenv). All you need to do is run the following on the command line to install `pipenv` and the dependencies:
+It's recommended you manage this with [`poetry`](https://github.com/pypa/poetry). All you need to do is run the following on the command line to install `poetry` and the dependencies:
 
 ```bash
 cd wow-addon-updater/
-pip install pipenv
-pipenv install
+pip install poetry
+poetry install
 ```
 
-The packages will be automagically installed by `pipenv` to a local virtual environment.
+The packages will be automagically installed by `poetry` to a local virtual environment.
 
 ## Running the utility
 
@@ -46,9 +46,9 @@ After performing the setup steps, you can run the executable scripts by clicking
  - `run_Windows.bat` for Windows or 
  - `run_MacLinux.sh` for other platforms.
 
-To run directly from the command line, use `pipenv run`:
+To run directly from the command line, use `poetry run`:
 ```bash
-pipenv run python -m updater [-c FILE]
+poetry run python -m updater [-c FILE]
 ```
 
 More advanced usage includes optionally specifying a configuration file, which is detailed in the next section.
@@ -82,7 +82,7 @@ The module supports a command-line configuration for maintaining multiple set of
 To use a different configuration file, specify it with the `--config` flag (or `-c`) e.g.
 
 ```bash
-pipenv run python -m updater -c my-custom-config.ini
+poetry run python -m updater -c my-custom-config.ini
 ```
 
 ## Supported addon hosts
@@ -118,20 +118,20 @@ https://git.tukui.org/elvui/elvui|ElvUI
 ```
 
 ## Contributing
-Bring up the dev `pipenv` with:
+Bring up the dev `poetry` with:
 ```bash
-pipenv install --dev
+poetry install --dev
 ```
 
 Run tests with:
 ```bash
-pipenv run -m unittest -v
+poetry run -m unittest -v
 ```
 
 or tests with coverage:
 ```bash
-pipenv run coverage run --source=updater -m unittest -v
-pipenv run coverage report
+poetry run coverage run --source=updater -m unittest -v
+poetry run coverage report
 ```
 
 1. Submit Issues, PR's, or make general comments
