@@ -125,7 +125,7 @@ pipenv install --dev
 
 Run tests with:
 ```bash
-pipenv run -m unittest -v
+pipenv run python -m unittest -v
 ```
 
 or tests with coverage:
