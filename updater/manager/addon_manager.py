@@ -1,4 +1,5 @@
 import configparser
+import logging
 import platform
 import shutil
 import subprocess
@@ -15,9 +16,11 @@ from updater.site import site_handler, github, tukui
 from updater.site.abstract_site import SiteError, AbstractSite
 from updater.site.enum import GameVersion
 
+logger = logging.getLogger(__name__)
+
 
 def error(message: str):
-    print(message)
+    logger.error(message)
     exit(1)
 
 
@@ -88,30 +91,30 @@ class AddonManager:
         try:
             latest_version = site.get_latest_version()
         except SiteError as e:
-            print(e)
+            logger.exception(e)
             latest_version = AddonManager._UNAVAILABLE
 
         installed_version = self.get_installed_version(addon_name)
         if latest_version in [AddonManager._UNAVAILABLE, installed_version]:
             pass
         else:
-            print(f"Installing/updating addon: {addon_name} to version: {latest_version}...\n")
+            logger.info(f"Installing/updating addon: {addon_name} to version: {latest_version}...\n")
 
             try:
                 zip_url = site.find_zip_url()
                 addon_zip = self.get_addon_zip(site.session, zip_url)
                 self.extract_to_addons(addon_zip, subfolder, site)
             except HTTPError:
-                print(f"Failed to download zip for [{addon_name}]")
+                logger.exception(f"Failed to download zip for [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
             except KeyError:
-                print(f"Failed to extract subfolder [{subfolder}] in archive for [{addon_name}]")
+                logger.exception(f"Failed to extract subfolder [{subfolder}] in archive for [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
             except SiteError as e:
-                print(e)
+                logger.exception(e)
                 latest_version = AddonManager._UNAVAILABLE
             except Exception as e:
-                print(f"Unexpected error unzipping [{addon_name}]")
+                logger.exception(f"Unexpected error unzipping [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
 
         addon_entry = [addon_name, addon_url, installed_version, latest_version]
@@ -178,6 +181,5 @@ class AddonManager:
                  for name, _, prev, new in self.manifest]  # eliminate the URL
         results = headers + table
         col_width = max(len(word) for row in results for word in row) + 2  # padding
-        print()
-        for row in results:
-            print("".join(word.ljust(col_width) for word in row))
+        results = ["".join(word.ljust(col_width) for word in row) for row in results]
+        logger.info('\n'.join(results))

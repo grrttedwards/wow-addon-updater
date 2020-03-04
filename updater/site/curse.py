@@ -1,9 +1,12 @@
+import logging
 import re
 
 import cloudscraper
 
 from updater.site.abstract_site import AbstractSite, SiteError
 from updater.site.enum import GameVersion
+
+logger = logging.getLogger(__name__)
 
 
 class Curse(AbstractSite):
@@ -41,7 +44,7 @@ class Curse(AbstractSite):
         try:
             page = Curse.session.get(self.url)
             if page.status_code in [403, 503]:
-                print("Curse is blocking requests because it thinks you are a bot... please try later.")
+                logger.error("Curse is blocking requests because it thinks you are a bot... please try later.")
             page.raise_for_status()  # Raise an exception for HTTP errors
             content_string = str(page.content)
             # the first one encountered will be the WoW retail version

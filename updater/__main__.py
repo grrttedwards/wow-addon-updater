@@ -1,4 +1,6 @@
 import argparse
+import logging
+import sys
 
 import requests
 
@@ -6,6 +8,33 @@ from updater.manager.addon_manager import AddonManager
 
 VERSION_FILE = 'VERSION'
 LATEST_VERSION_URL = 'https://github.com/grrttedwards/wow-addon-updater/releases/latest'
+
+
+class NoTracebackStreamHandler(logging.StreamHandler):
+    def handle(self, record):
+        info, cache = record.exc_info, record.exc_text
+        record.exc_info, record.exc_text = None, None
+        try:
+            super().handle(record)
+        finally:
+            record.exc_info = info
+            record.exc_text = cache
+
+
+# configure logging
+logger = logging.getLogger()
+logger.setLevel(logging.NOTSET)  # root logger needs to have the lowest level
+
+sh = NoTracebackStreamHandler(sys.stdout)
+sh.setLevel(logging.INFO)
+sh.setFormatter(logging.Formatter('%(message)s'))
+sh.addFilter(lambda record: record)
+logger.addHandler(sh)
+
+fh = logging.FileHandler('addon-updater.log', mode='w', encoding="utf-8")
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(fh)
 
 
 def confirm_exit():
@@ -30,10 +59,10 @@ def check_version():
         # https://github.com/grrttedwards/wow-addon-updater/releases/tag/v1.5.1
         latest_version = requests.get(LATEST_VERSION_URL).url.split('/')[-1]
         if current_version != latest_version:
-            print(get_update_message(latest_version))
+            logger.info(get_update_message(latest_version))
     except Exception as e:
-        print("Something went wrong finding the latest app version! "
-              "Please report this on GitHub and check for a new release.")
+        logger.exception("Something went wrong finding the latest app version! "
+                         "Please report this on GitHub and check for a new release.")
 
 
 def main():
