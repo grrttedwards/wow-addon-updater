@@ -1,8 +1,12 @@
+import logging
+
 import cloudscraper
 from bs4 import BeautifulSoup
 
 from updater.site.abstract_site import AbstractSite
 from updater.site.enum import GameVersion
+
+logger = logging.getLogger(__name__)
 
 
 class WoWAce(AbstractSite):
@@ -45,7 +49,7 @@ class WoWAce(AbstractSite):
         try:
             page = WoWAce.session.get(self.url)
             if page.status_code in [403, 503]:
-                print('WoWAce (Curse) is blocking requests because it thinks you are a bot... please try later.')
+                logger.error('WoWAce (Curse) is blocking requests because it thinks you are a bot... please try later.')
             page.raise_for_status()  # Raise an exception for HTTP errors
             self.page = BeautifulSoup(page.text, 'html.parser')
             return self.page
