@@ -55,6 +55,7 @@ def check_version():
     try:
         with open(VERSION_FILE, mode='r') as f:
             current_version = f.read().strip('\n')
+        logger.debug(f"Current version: {current_version}")
         # follow the latest release URL and it redirects and returns a URL like
         # https://github.com/grrttedwards/wow-addon-updater/releases/tag/v1.5.1
         latest_version = requests.get(LATEST_VERSION_URL).url.split('/')[-1]
@@ -71,7 +72,10 @@ def main():
                         help='the file to be used for configuration')
     args = parser.parse_args()
 
-    AddonManager(args.config).update_all()
+    try:
+        AddonManager(args.config).update_all()
+    except:
+        logger.exception("Something bad happened. Please check the logs.")
 
     check_version()
 

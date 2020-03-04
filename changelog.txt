@@ -1,4 +1,7 @@
 Changelog
+* 03/04/2020 - v1.6.1
+Add current version logging and a broad exception clause in the main method.
+
 * 03/04/2020 - v1.6.0
 Finally start logging exceptions properly. Output should look familiar in the console, but exceptions and detailed debug information is available in a log file.
 Also fixes an issue with curse issuing reCaptcha challenges because cloudscraper was out of date.
