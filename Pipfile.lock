@@ -39,11 +39,11 @@
         },
         "cloudscraper": {
             "hashes": [
-                "sha256:12eebdfab1e76ea82b0ac2bcbe9a53f2d5c7041bb7109d97465f720cecab8f33",
-                "sha256:309e237370e5e37d9354874311295bcaf640424771f9f21e21cba91d4276365a"
+                "sha256:7a843769aaed50905afeff82c3ebdd1a3a5980bfa5436719f05f0db4af127790",
+                "sha256:ebeb5f9adcb52ed6b763688b05c34264942116b01f8f0b7a5b7de7c1d505cd67"
             ],
             "index": "pypi",
-            "version": "==1.2.26"
+            "version": "==1.2.28"
         },
         "idna": {
             "hashes": [

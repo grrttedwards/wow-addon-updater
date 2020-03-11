@@ -22,19 +22,21 @@ class NoTracebackStreamHandler(logging.StreamHandler):
 
 
 # configure logging
-logger = logging.getLogger()
-logger.setLevel(logging.NOTSET)  # root logger needs to have the lowest level
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.NOTSET)  # root logger needs to have the lowest level
 
 sh = NoTracebackStreamHandler(sys.stdout)
 sh.setLevel(logging.INFO)
 sh.setFormatter(logging.Formatter('%(message)s'))
 sh.addFilter(lambda record: record)
-logger.addHandler(sh)
+root_logger.addHandler(sh)
 
 fh = logging.FileHandler('addon-updater.log', mode='w', encoding="utf-8")
 fh.setLevel(logging.DEBUG)
-fh.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-logger.addHandler(fh)
+fh.setFormatter(logging.Formatter('%(asctime)s [%(levelname)-5s] [%(thread)d] [%(name)s] %(message)s'))
+root_logger.addHandler(fh)
+
+logger = logging.getLogger(__name__)
 
 
 def confirm_exit():
