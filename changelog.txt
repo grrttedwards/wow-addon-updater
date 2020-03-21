@@ -1,4 +1,7 @@
 Changelog
+* 03/21/2020 - v1.6.3
+Update cloudscraper version.
+
 * 03/11/2020 - v1.6.2
 Upgrade cloudscraper version and improve internal logging format.
 
