@@ -130,7 +130,7 @@ class AddonManager:
             norm_src_dir = temp_dir
             destination_dir = self.wow_addon_location
 
-            if isinstance(site, github.GitHub) or isinstance(site, tukui.Tukui):
+            if isinstance(site, github.GitHub):
                 first_zip_member, *_ = zipped.namelist()
                 # sometimes zips don't contain an entry for the top-level folder, so parse it from the first member
                 top_level_folder, *_ = first_zip_member.split('/')
