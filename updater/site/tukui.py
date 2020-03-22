@@ -19,15 +19,10 @@ class Tukui(AbstractSite):
 
     def find_zip_url(self):
         version = self.get_latest_version()
-        # like https://git.tukui.org/elvui/elvui/-/archive/v11.21/elvui-v11.21.zip
-        #return f"{self.url}/-/archive/{version}/{self.get_addon_name()}-{version}.zip"
         
+        # like https://www.tukui.org/classic-addons.php?download=2
         downloadpage = self.url.replace('id', 'download')
-        return downloadpage
-        #try:
-        #   response = Tukui.session.get(downloadpage)
-        #   response.raise_for_status()
-            
+        return downloadpage          
 
     def get_latest_version(self):
         if self.latest_version:
