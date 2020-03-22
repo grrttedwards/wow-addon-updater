@@ -142,7 +142,7 @@ class AddonManager:
                 destination_dir = join(self.wow_addon_location, subfolder)
                 norm_src_dir = join(norm_src_dir, subfolder)
 
-            if subfolder or isinstance(site, github.GitHub) or isinstance(site, tukui.Tukui):
+            if subfolder or isinstance(site, github.GitHub):
                 zipped.extractall(path=temp_dir)
                 if not isdir(norm_src_dir):
                     raise KeyError()
