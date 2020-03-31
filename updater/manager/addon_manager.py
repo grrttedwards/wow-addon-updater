@@ -183,3 +183,4 @@ class AddonManager:
         col_width = max(len(word) for row in results for word in row) + 2  # padding
         results = ["".join(word.ljust(col_width) for word in row) for row in results]
         logger.info('\n'.join(results))
+        input("Press Enter to continue...")
