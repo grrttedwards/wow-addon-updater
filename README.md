@@ -53,6 +53,19 @@ pipenv run python -m updater [-c FILE]
 
 More advanced usage includes optionally specifying a configuration file, which is detailed in the next section.
 
+## Issues Downloading Addons?
+
+Occasionally, this utility may fail to download files from sites. This is generally caused by an update to Cloudflare's anti-bot page, and can be fixed by updating the cloudscraper module.
+
+To update this module from the command line, use `pipenv update`:
+
+```bash
+cd wow-addon-updater/
+pipenv update
+```
+
+After updating, re-run the utility to attempt updating the affected addons.
+
 ## Configuring the utility
 
 The `config.ini` file is used by default to find where to install the addons to, and where to get the list of addons from.
