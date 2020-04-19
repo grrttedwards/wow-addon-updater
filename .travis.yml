@@ -10,4 +10,4 @@ install:
   - 'pip install pipenv'
   - 'pipenv install --dev'
 script:
-  'pipenv run python -m unittest'
+  'pipenv run python -m unittest -v'
