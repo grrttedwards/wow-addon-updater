@@ -131,7 +131,7 @@ class AddonManager:
             norm_src_dir = temp_dir
             destination_dir = self.wow_addon_location
 
-            if isinstance(site, github.GitHub) or isinstance(site, tukui.Tukui):
+            if isinstance(site, github.GitHub):
                 first_zip_member, *_ = zipped.namelist()
                 # sometimes zips don't contain an entry for the top-level folder, so parse it from the first member
                 top_level_folder, *_ = first_zip_member.split('/')
@@ -143,7 +143,7 @@ class AddonManager:
                 destination_dir = join(self.wow_addon_location, subfolder)
                 norm_src_dir = join(norm_src_dir, subfolder)
 
-            if subfolder or isinstance(site, github.GitHub) or isinstance(site, tukui.Tukui):
+            if subfolder or isinstance(site, github.GitHub):
                 zipped.extractall(path=temp_dir)
                 if not isdir(norm_src_dir):
                     raise KeyError()

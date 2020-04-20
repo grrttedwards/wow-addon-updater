@@ -7,7 +7,7 @@ from updater.site.enum import GameVersion
 
 class Tukui(AbstractSite):
     _URLS = [
-        'https://git.tukui.org/elvui/'
+        'https://www.tukui.org/'
     ]
 
     session = requests.session()
@@ -19,18 +19,28 @@ class Tukui(AbstractSite):
 
     def find_zip_url(self):
         version = self.get_latest_version()
-        # like https://git.tukui.org/elvui/elvui/-/archive/v11.21/elvui-v11.21.zip
-        return f"{self.url}/-/archive/{version}/{self.get_addon_name()}-{version}.zip"
+        
+        # like https://www.tukui.org/classic-addons.php?download=2
+        downloadpage = self.url.replace('id', 'download')
+        return downloadpage          
 
     def get_latest_version(self):
         if self.latest_version:
             return self.latest_version
         try:
-            response = Tukui.session.get(self.url + '/-/tags')
+            response = Tukui.session.get(self.url + '#extras')
             response.raise_for_status()
-            tags_page = BeautifulSoup(response.text, 'html.parser')
-            version = tags_page.find('div', {'class': 'tags'}).find('a').string
+            content_string = str(response.content)
+            index_of_ver = content_string.find('The latest version of this addon is <b class="VIP">') + 51
+            end_tag = content_string.find('</b>')
+            return content_string[index_of_ver:end_tag].strip()
         except Exception as e:
             raise self.version_error() from e
-        self.latest_version = version
-        return self.latest_version
+
+    def get_addon_name(self):
+        response = Tukui.session.get(self.url)
+        response.raise_for_status()
+        page = BeautifulSoup(response.text, 'html.parser')
+        name = page.find('span', attrs={'class': 'Member'})
+        addon_name = name.text.strip()
+        return addon_name
