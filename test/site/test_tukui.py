@@ -11,6 +11,7 @@ class TestTukui(unittest.TestCase):
     def test_integration_tukui_find_zip_url(self):
         zip_url = self.tukui.find_zip_url()
         self.assertEqual(zip_url, 'https://www.tukui.org/classic-addons.php?download=2')
+
     def test_integration_tukui_get_addon_name(self):
         addon_name = self.tukui.get_addon_name()
         self.assertEqual(addon_name, 'ElvUI')
