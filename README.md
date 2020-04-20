@@ -124,6 +124,9 @@ https://www.tukui.org/classic-addons.php?id=2
 
 Each link needs to be the main page for the addon, as shown above.
 
+>**_NOTE_**: Tukui addon URLs should point to the standard download page, and not the git repo.
+>i.e. https://www.tukui.org/classic-addons.php?id=2 and not https://git.tukui.org/elvui/elvui|ElvUI
+
 ### Addons archives containing subfolders
 If you want to extract a subfolder from the default downloaded folder, add a pipe character (`|`) and the name of the subfolder at the end of the line. For example, the ElvUI addon can be added as follows:
 
