@@ -3,6 +3,7 @@ import logging
 import cloudscraper
 from bs4 import BeautifulSoup
 
+from updater.site import CURSE_UA
 from updater.site.abstract_site import AbstractSite
 from updater.site.enum import GameVersion
 
@@ -15,7 +16,7 @@ class WoWAce(AbstractSite):
         'https://wowace.com/projects/'
     ]
 
-    session = cloudscraper.create_scraper()
+    session = cloudscraper.create_scraper(browser=CURSE_UA)
     latest_version = None
     page = None
 
