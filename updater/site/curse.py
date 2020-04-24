@@ -3,6 +3,7 @@ import re
 
 import cloudscraper
 
+from updater.site import CURSE_UA
 from updater.site.abstract_site import AbstractSite, SiteError
 from updater.site.enum import GameVersion
 
@@ -20,7 +21,7 @@ class Curse(AbstractSite):
         _OLD_PROJECT_URL
     ]
 
-    session = cloudscraper.create_scraper()
+    session = cloudscraper.create_scraper(browser=CURSE_UA)
 
     def __init__(self, url: str, game_version: GameVersion):
         url = Curse._convert_old_curse_urls(url)

@@ -44,11 +44,11 @@ def confirm_exit():
     exit(0)
 
 
-def get_update_message(version):
+def get_update_message(current_version, latest_version):
     separator = '~' * len(LATEST_VERSION_URL)
-    message = f"A new update ({version}) is available! Check it out at".center(len(LATEST_VERSION_URL))
+    msg = f"A new update ({latest_version}) is available! You have ({current_version}).".center(len(LATEST_VERSION_URL))
 
-    lines = ['\n', separator, message, LATEST_VERSION_URL, separator]
+    lines = ['\n', separator, msg, LATEST_VERSION_URL, separator]
 
     return '\n'.join(lines)
 
@@ -62,7 +62,7 @@ def check_version():
         # https://github.com/grrttedwards/wow-addon-updater/releases/tag/v1.5.1
         latest_version = requests.get(LATEST_VERSION_URL).url.split('/')[-1]
         if current_version != latest_version:
-            logger.info(get_update_message(latest_version))
+            logger.info(get_update_message(current_version, latest_version))
     except Exception as e:
         logger.exception("Something went wrong finding the latest app version! "
                          "Please report this on GitHub and check for a new release.")
