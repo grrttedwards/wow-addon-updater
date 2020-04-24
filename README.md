@@ -4,12 +4,12 @@ This utility provides an alternative to the Twitch/Curse client for management a
 
 _Supporting both retail and classic addons!_
 
-[![Build Status](https://travis-ci.com/grrttedwards/wow-addon-updater.svg?branch=master)](https://travis-ci.com/grrttedwards/wow-addon-updater)
+[![Build Status](https://github.com/grrttedwards/wow-addon-updater/workflows/Build%20and%20test%20wow-addon-updater/badge.svg?branch=master)](https://github.com/grrttedwards/wow-addon-updater/actions?query=workflow%3A%22Build+and+test+wow-addon-updater%22+branch%3Amaster)
 
 ## Downloading
-The best way to get the latest stable code is to head to the [Latest Releases page](https://github.com/grrttedwards/wow-addon-updater/releases/latest), or selecting the GitHub `Releases` tab above.
+The best way to get the latest stable code is to head to the [Latest Releases page](https://github.com/grrttedwards/wow-addon-updater/releases/latest), or checking out the `master` branch.
 
-If you're feeling adventurous, you can also download the latest `master` branch by pressing the big green `Clone or download` button and selecting `Download ZIP`.
+If you're feeling adventurous, you can also download the latest (possibly unstable) `develop` branch.
 
 ## First-time setup
 
