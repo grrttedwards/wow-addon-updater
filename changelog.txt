@@ -1,4 +1,7 @@
 Changelog
+* 04/24/2020 - v1.7.0
+Fix some bugs, choose a fake useragent that Curse is happy with, support more Tukui addons.
+
 * 03/21/2020 - v1.6.3
 Update cloudscraper version.
 
