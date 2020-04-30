@@ -83,7 +83,10 @@ class AddonManager:
 
         site = site_handler.get_handler(addon_url, self.game_version)
 
-        addon_name = site.get_addon_name()
+        try:
+            addon_name = site.get_addon_name()
+        except Exception as e:
+            logger.exception(e)
 
         if subfolder:
             [subfolder] = subfolder

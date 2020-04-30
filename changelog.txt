@@ -1,4 +1,7 @@
 Changelog
+* 04/29/2020 - v1.7.1
+Fix a regression and actually enable all of the Tukui/ElvUI family addons to work, including both retail and classic.
+
 * 04/24/2020 - v1.7.0
 Fix some bugs, choose a fake useragent that Curse is happy with, support more Tukui addons.
 
