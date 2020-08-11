@@ -1,4 +1,5 @@
 import configparser
+import logging
 import platform
 import shutil
 import subprocess
@@ -15,9 +16,11 @@ from updater.site import site_handler, github, tukui
 from updater.site.abstract_site import SiteError, AbstractSite
 from updater.site.enum import GameVersion
 
+logger = logging.getLogger(__name__)
+
 
 def error(message: str):
-    print(message)
+    logger.error(message)
     exit(1)
 
 
@@ -72,6 +75,7 @@ class AddonManager:
 
         self.set_installed_versions()
         self.display_results()
+        self.explain_curse_error()
 
     def update_addon(self, addon_entry):
         # Expected format: "mydomain.com/myaddon" or "mydomain.com/myaddon|subfolder"
@@ -79,7 +83,10 @@ class AddonManager:
 
         site = site_handler.get_handler(addon_url, self.game_version)
 
-        addon_name = site.get_addon_name()
+        try:
+            addon_name = site.get_addon_name()
+        except Exception as e:
+            logger.exception(e)
 
         if subfolder:
             [subfolder] = subfolder
@@ -88,30 +95,30 @@ class AddonManager:
         try:
             latest_version = site.get_latest_version()
         except SiteError as e:
-            print(e)
+            logger.exception(e)
             latest_version = AddonManager._UNAVAILABLE
 
         installed_version = self.get_installed_version(addon_name)
         if latest_version in [AddonManager._UNAVAILABLE, installed_version]:
             pass
         else:
-            print(f"Installing/updating addon: {addon_name} to version: {latest_version}...\n")
+            logger.info(f"Installing/updating addon: {addon_name} to version: {latest_version}...\n")
 
             try:
                 zip_url = site.find_zip_url()
                 addon_zip = self.get_addon_zip(site.session, zip_url)
                 self.extract_to_addons(addon_zip, subfolder, site)
             except HTTPError:
-                print(f"Failed to download zip for [{addon_name}]")
+                logger.exception(f"Failed to download zip for [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
             except KeyError:
-                print(f"Failed to extract subfolder [{subfolder}] in archive for [{addon_name}]")
+                logger.exception(f"Failed to extract subfolder [{subfolder}] in archive for [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
             except SiteError as e:
-                print(e)
+                logger.exception(e)
                 latest_version = AddonManager._UNAVAILABLE
             except Exception as e:
-                print(f"Unexpected error unzipping [{addon_name}]")
+                logger.exception(f"Unexpected error unzipping [{addon_name}]")
                 latest_version = AddonManager._UNAVAILABLE
 
         addon_entry = [addon_name, addon_url, installed_version, latest_version]
@@ -127,7 +134,7 @@ class AddonManager:
             norm_src_dir = temp_dir
             destination_dir = self.wow_addon_location
 
-            if isinstance(site, github.GitHub) or isinstance(site, tukui.Tukui):
+            if isinstance(site, github.GitHub):
                 first_zip_member, *_ = zipped.namelist()
                 # sometimes zips don't contain an entry for the top-level folder, so parse it from the first member
                 top_level_folder, *_ = first_zip_member.split('/')
@@ -139,7 +146,7 @@ class AddonManager:
                 destination_dir = join(self.wow_addon_location, subfolder)
                 norm_src_dir = join(norm_src_dir, subfolder)
 
-            if subfolder or isinstance(site, github.GitHub) or isinstance(site, tukui.Tukui):
+            if subfolder or isinstance(site, github.GitHub):
                 zipped.extractall(path=temp_dir)
                 if not isdir(norm_src_dir):
                     raise KeyError()
@@ -178,6 +185,17 @@ class AddonManager:
                  for name, _, prev, new in self.manifest]  # eliminate the URL
         results = headers + table
         col_width = max(len(word) for row in results for word in row) + 2  # padding
-        print()
-        for row in results:
-            print("".join(word.ljust(col_width) for word in row))
+        results = ["".join(word.ljust(col_width) for word in row) for row in results]
+        logger.info('\n\n' + '\n'.join(results))
+
+    def explain_curse_error(self):
+        for _, url, _, new in self.manifest:
+            if "curse" in url and new == "Unavailable":
+                message = '\n'.join([
+                    "Looks like Curse may be blocking your requests!  :(",
+                    "This tool relies on a third party module to look like a browser and not a script.",
+                    "Try running 'pipenv update' on your command line and trying again.",
+                    "If it doesn't help, feel free to open an issue on GitHub."
+                ])
+                logger.info('\n\n' + message)
+                return

@@ -1,4 +1,23 @@
 Changelog
+* 04/29/2020 - v1.7.1
+Fix a regression and actually enable all of the Tukui/ElvUI family addons to work, including both retail and classic.
+
+* 04/24/2020 - v1.7.0
+Fix some bugs, choose a fake useragent that Curse is happy with, support more Tukui addons.
+
+* 03/21/2020 - v1.6.3
+Update cloudscraper version.
+
+* 03/11/2020 - v1.6.2
+Upgrade cloudscraper version and improve internal logging format.
+
+* 03/04/2020 - v1.6.1
+Add current version logging and a broad exception clause in the main method.
+
+* 03/04/2020 - v1.6.0
+Finally start logging exceptions properly. Output should look familiar in the console, but exceptions and detailed debug information is available in a log file.
+Also fixes an issue with curse issuing reCaptcha challenges because cloudscraper was out of date.
+
 * 01/19/2020 - v1.5.2
 Improve the version check to actually check for latest releases and compare a new VERSION file. Should alert users only when a new release has been published, not just any change to master.
 

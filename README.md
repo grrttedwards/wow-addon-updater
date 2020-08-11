@@ -4,12 +4,12 @@ This utility provides an alternative to the Twitch/Curse client for management a
 
 _Supporting both retail and classic addons!_
 
-[![Build Status](https://travis-ci.com/grrttedwards/wow-addon-updater.svg?branch=master)](https://travis-ci.com/grrttedwards/wow-addon-updater)
+[![Build Status](https://github.com/grrttedwards/wow-addon-updater/workflows/Build%20and%20test%20wow-addon-updater/badge.svg?branch=master)](https://github.com/grrttedwards/wow-addon-updater/actions?query=workflow%3A%22Build+and+test+wow-addon-updater%22+branch%3Amaster)
 
 ## Downloading
-The best way to get the latest stable code is to head to the [Latest Releases page](https://github.com/grrttedwards/wow-addon-updater/releases/latest), or selecting the GitHub `Releases` tab above.
+The best way to get the latest stable code is to head to the [Latest Releases page](https://github.com/grrttedwards/wow-addon-updater/releases/latest), or checking out the `master` branch.
 
-If you're feeling adventurous, you can also download the latest `master` branch by pressing the big green `Clone or download` button and selecting `Download ZIP`.
+If you're feeling adventurous, you can also download the latest (possibly unstable) `develop` branch.
 
 ## First-time setup
 
@@ -52,6 +52,19 @@ pipenv run python -m updater [-c FILE]
 ```
 
 More advanced usage includes optionally specifying a configuration file, which is detailed in the next section.
+
+## Issues Downloading Addons?
+
+Occasionally, this utility may fail to download files from sites. This is generally caused by an update to Cloudflare's anti-bot page, and can be fixed by updating the cloudscraper module.
+
+To update this module from the command line, use `pipenv update`:
+
+```bash
+cd wow-addon-updater/
+pipenv update
+```
+
+After updating, re-run the utility to attempt updating the affected addons.
 
 ## Configuring the utility
 
@@ -106,15 +119,19 @@ https://www.curseforge.com/wow/addons/deadly-boss-mods
 https://www.curseforge.com/wow/addons/auctionator
 https://www.wowinterface.com/downloads/info24005-RavenousMounts.html
 https://www.github.com/some-user/some-addon-repo
+https://www.tukui.org/classic-addons.php?id=2
 ```
 
 Each link needs to be the main page for the addon, as shown above.
 
+>**_NOTE_**: Tukui addon URLs should point to the standard download page, and not the git repo.
+>i.e. https://www.tukui.org/classic-addons.php?id=2 and not https://git.tukui.org/elvui/elvui|ElvUI
+
 ### Addons archives containing subfolders
-If you want to extract a subfolder from the default downloaded folder (typically needed with Tukui addons), add a pipe character (`|`) and the name of the subfolder at the end of the line. For example, the ElvUI addon can be added as follows:
+If you want to extract a subfolder from the default downloaded folder, add a pipe character (`|`) and the name of the subfolder at the end of the line. For example, the ElvUI addon can be added as follows:
 
 ```
-https://git.tukui.org/elvui/elvui|ElvUI
+https://www.github.com/some-user/some-addon-repo|AddOn
 ```
 
 ## Contributing
@@ -125,7 +142,7 @@ pipenv install --dev
 
 Run tests with:
 ```bash
-pipenv run -m unittest -v
+pipenv run python -m unittest -v
 ```
 
 or tests with coverage:
