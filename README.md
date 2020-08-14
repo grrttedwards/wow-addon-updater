@@ -60,11 +60,11 @@ pipenv shell
 # verify that it's $VIRTUAL_ENV/bin/python
 
 # Using the distutils method
-`python setup.py install`
+python setup.py install
 # Using pip
-`pip install .`
+pip install .
 # Make sure the command is where we expect
-`which wow-addon-updater`
+which wow-addon-updater
 # This should output $VIRTUAL_ENV/bin/wow-addon-updater
 
 ```
