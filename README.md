@@ -151,6 +151,11 @@ pipenv run coverage run --source=updater -m unittest -v
 pipenv run coverage report
 ```
 
+Updating deps in setup.py:
+```bash
+pipenv-setup sync -d
+```
+
 1. Submit Issues, PR's, or make general comments
 1. ????
 1. Profit
