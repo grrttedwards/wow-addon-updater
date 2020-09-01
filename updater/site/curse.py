@@ -1,6 +1,10 @@
 import logging
 import re
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Generator
 
+import bs4
 import cloudscraper
 
 from updater.site import CURSE_UA
@@ -8,6 +12,48 @@ from updater.site.abstract_site import AbstractSite, SiteError
 from updater.site.enum import GameVersion
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class CurseAddonVersion:
+    type: str
+    name: str
+    size: str
+    uploaded: str
+    game_version: str
+    downloads: int
+    download_link: str
+
+    @classmethod
+    def from_tr(cls, tr: bs4.element.Tag):
+        cells = tr.find_all('td')
+        name = cells[1].text.strip()
+        size = cells[2].text.strip()
+        uploaded = datetime.fromtimestamp(int(cells[3].find('abbr').attrs.get('data-epoch'))).isoformat()
+        game_version = cells[4].text.strip()
+        downloads = int(cells[5].text.replace(',', '').strip())
+
+        return cls(type=cls.get_type(cells[0]), name=name, size=size,
+                   uploaded=uploaded, game_version=game_version, downloads=downloads,
+                   download_link=cls.get_link(cells[6]))
+
+    @staticmethod
+    def get_type(td: bs4.element.Tag) -> str:
+        class_fields = td.find('div').attrs.get('class')
+        bg_field = next(field for field in class_fields if field.startswith('bg-'))
+        if 'blue' in bg_field:
+            return 'beta'
+        elif 'green' in bg_field:
+            return 'release'
+        elif 'offset' in bg_field:
+            return 'alpha'
+        else:
+            raise ValueError
+
+    @staticmethod
+    def get_link(td: bs4.element.Tag) -> str:
+        relative_link = td.find('a').attrs.get('href')
+        return f'https://curseforge.com{relative_link}/file'
 
 
 class Curse(AbstractSite):
@@ -41,21 +87,30 @@ class Curse(AbstractSite):
         except Exception as e:
             raise self.download_error() from e
 
-    def get_latest_version(self):
+    def versions(self, *, page=1) -> Generator[CurseAddonVersion, None, None]:
+        if self.game_version == GameVersion.classic:
+            game_version_filter = '1738749986:67408'
+        elif self.game_version == GameVersion.classic:
+            game_version_filter = '1738749986:517'
+        else:
+            game_version_filter = ''
+        request_params = {'filter-game-version': game_version_filter, 'page': page}
         try:
-            page = Curse.session.get(self.url)
-            if page.status_code in [403, 503]:
-                logger.error("Curse is blocking requests because it thinks you are a bot... please try later.")
-            page.raise_for_status()  # Raise an exception for HTTP errors
-            content_string = str(page.content)
-            # the first one encountered will be the WoW retail version
-            main_version, *classic_version = re.findall(
-                r"cf-recentfiles.+?data-id=.+?data-name=\"(?P<version>.+?)\"",
-                content_string)
-            # if classic, choose the explicit "classic version" listed, or fall back to the only version available
-            return classic_version[-1] if self.game_version is GameVersion.classic and classic_version else main_version
+            p = Curse.session.get(f'{self.url}/files/all', params=request_params)
+            soup = bs4.BeautifulSoup(p.text, 'html.parser')
+            versions_table = soup.find('table', {'class': 'listing listing-project-file project-file-listing b-table b-table-a'})
+            _, *version_rows = versions_table.find_all('tr')
+            yield from (CurseAddonVersion.from_tr(row) for row in version_rows)
+            pages_exist = soup.find('div', {'class': 'pagination pagination-top flex items-center'})
+            inactive_next_page = soup.find('div', {'class': 'pagination-next h-6 w-6 flex items-center justify-center pagination-next--inactive'})
+            if pages_exist and not inactive_next_page:
+                yield from self.versions(page=page+1)
         except Exception as e:
             raise self.version_error() from e
+
+    def get_latest_version(self):
+        latest_release = next(version for version in self.versions() if version.type == 'release')
+        return latest_release.game_version
 
     @classmethod
     def _convert_old_curse_urls(cls, url: str) -> str:
