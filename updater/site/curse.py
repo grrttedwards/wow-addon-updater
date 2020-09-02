@@ -90,15 +90,16 @@ class Curse(AbstractSite):
     def versions(self, *, page=1) -> Generator[CurseAddonVersion, None, None]:
         if self.game_version == GameVersion.classic:
             game_version_filter = '1738749986:67408'
-        elif self.game_version == GameVersion.classic:
+        elif self.game_version == GameVersion.retail:
             game_version_filter = '1738749986:517'
-        else:
+        else:  # Agnostic version
             game_version_filter = ''
         request_params = {'filter-game-version': game_version_filter, 'page': page}
         try:
             p = Curse.session.get(f'{self.url}/files/all', params=request_params)
             soup = bs4.BeautifulSoup(p.text, 'html.parser')
             versions_table = soup.find('table', {'class': 'listing listing-project-file project-file-listing b-table b-table-a'})
+            # Header row consumed by _
             _, *version_rows = versions_table.find_all('tr')
             yield from (CurseAddonVersion.from_tr(row) for row in version_rows)
             pages_exist = soup.find('div', {'class': 'pagination pagination-top flex items-center'})
