@@ -109,8 +109,8 @@ class Curse(AbstractSite):
             raise self.version_error() from e
 
     def get_latest_version(self):
-        latest_release = next(version for version in self.versions() if version.type == 'release')
-        return latest_release.game_version
+        latest_release = next(version.name for version in self.versions() if version.type == 'release')
+        return latest_release
 
     @classmethod
     def _convert_old_curse_urls(cls, url: str) -> str:
