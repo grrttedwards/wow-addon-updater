@@ -101,6 +101,8 @@ class Curse(AbstractSite):
             # Header row consumed by _
             _, *version_rows = versions_table.find_all('tr')
             yield from (CurseAddonVersion.from_tr(row) for row in version_rows)
+
+            # determine if there are more pages of versions, recurse if so
             pages_exist = soup.find('div', {'class': 'pagination pagination-top flex items-center'})
             inactive_next_page = soup.find('div', {'class': 'pagination-next h-6 w-6 flex items-center justify-center pagination-next--inactive'})
             if pages_exist and not inactive_next_page:
