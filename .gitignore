@@ -22,3 +22,8 @@ desktop.ini
 \.coverage
 
 *.log
+
+# Python setuptools cache
+build/
+dist/
+wow_addon_updater.egg-info/

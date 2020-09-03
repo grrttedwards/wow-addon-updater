@@ -60,4 +60,5 @@ setup(
         "soupsieve==2.0.1; python_version >= '3.5'",
         "urllib3==1.25.10; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
     ],
+    python_requires=">=3.8.0",
 )
