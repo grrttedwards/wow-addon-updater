@@ -10,6 +10,12 @@ setup(
     ),
     author="Garrett Edwards",
     url="https://github.com/grrttedwards/wow-addon-manager",
+    license="GPLv3",
+    classifiers=[
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Programming Language :: Python :: 3 :: Only",
+        "Operating System :: OS Independent",
+    ],
     packages=["updater", "updater.manager", "updater.site"],
     entry_points={"console_scripts": ["wow-addon-updater = updater.__main__:main"],},
     extras_require={
