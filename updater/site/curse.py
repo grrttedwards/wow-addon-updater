@@ -9,14 +9,14 @@ import cloudscraper
 
 from updater.site import CURSE_UA
 from updater.site.abstract_site import AbstractSite, SiteError
-from updater.site.enum import GameVersion
+from updater.site.enum import AddonVersion, GameVersion
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class CurseAddonVersion:
-    type: str
+    type: AddonVersion
     name: str
     size: str
     uploaded: str
@@ -38,15 +38,15 @@ class CurseAddonVersion:
                    download_link=cls.get_link(cells[6]))
 
     @staticmethod
-    def get_type(td: bs4.element.Tag) -> str:
+    def get_type(td: bs4.element.Tag) -> AddonVersion:
         class_fields = td.find('div').attrs.get('class')
         bg_field = next(field for field in class_fields if field.startswith('bg-'))
         if 'blue' in bg_field:
-            return 'beta'
+            return AddonVersion.beta
         elif 'green' in bg_field:
-            return 'release'
+            return AddonVersion.release
         elif 'offset' in bg_field:
-            return 'alpha'
+            return AddonVersion.alpha
         else:
             raise ValueError
 
@@ -69,9 +69,10 @@ class Curse(AbstractSite):
 
     session = cloudscraper.create_scraper(browser=CURSE_UA)
 
-    def __init__(self, url: str, game_version: GameVersion):
+    def __init__(self, url: str, game_version: GameVersion, addon_version: AddonVersion = AddonVersion.release):
         url = Curse._convert_old_curse_urls(url)
         super().__init__(url, game_version)
+        self.addon_version = addon_version
 
     def find_zip_url(self):
         try:
@@ -88,6 +89,11 @@ class Curse(AbstractSite):
             raise self.download_error() from e
 
     def versions(self, *, page=1) -> Generator[CurseAddonVersion, None, None]:
+        """Yields a sequence of CurseAddonVersions corresponding to addon releases
+
+        Ordered descending in time, so the first version yielded is the most recent.
+        Will page through until exhausted.
+        """
         if self.game_version == GameVersion.classic:
             game_version_filter = '1738749986:67408'
         elif self.game_version == GameVersion.retail:
@@ -109,8 +115,17 @@ class Curse(AbstractSite):
         except Exception as e:
             raise self.version_error() from e
 
-    def get_latest_version(self):
-        latest_release = next(version.name for version in self.versions() if version.type == 'release')
+    def get_latest_version(self) -> str:
+        """Returns the latest version released for retail/classic
+
+        The `version.type >= self.addon_version` logic chooses the most recent
+        addon according to the ordering that release > beta > alpha. So if you
+        are following the beta track and a new alpha version is release, you won't
+        get it, but a new release version you will.
+
+        Returns the name of the most recent release.
+        """
+        latest_release = next(version.name for version in self.versions() if version.type >= self.addon_version)
         return latest_release
 
     @classmethod
