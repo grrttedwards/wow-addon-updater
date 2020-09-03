@@ -59,9 +59,9 @@ pipenv shell
 # created by `pipenv install` but to be sure you can check with `which python` and
 # verify that it's $VIRTUAL_ENV/bin/python
 
-# Using the distutils method
+# Either using the distutils method
 python setup.py install
-# Using pip
+# Or using pip
 pip install .
 # Make sure the command is where we expect
 which wow-addon-updater
