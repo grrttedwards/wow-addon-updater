@@ -53,7 +53,7 @@ class CurseAddonVersion:
     @staticmethod
     def get_link(td: bs4.element.Tag) -> str:
         relative_link = td.find('a').attrs.get('href')
-        return f'https://curseforge.com{relative_link}/file'
+        return f'https://www.curseforge.com{relative_link}/file'
 
 
 class Curse(AbstractSite):
@@ -76,15 +76,8 @@ class Curse(AbstractSite):
 
     def find_zip_url(self):
         try:
-            page = Curse.session.get(self.url)
-            page.raise_for_status()  # Raise an exception for HTTP errors
-            content_string = str(page.content)
-            main_zip_url, *classic_zip_url = re.findall(
-                r"cf-recentfiles-credits-wrapper ml-auto my-auto.+?href=\"(?P<download>.+?)\"",
-                content_string)
-            # if classic, choose the explicit "classic download" listed, or fall back to the only download available
-            zip_url = classic_zip_url[-1] if self.game_version is GameVersion.classic and classic_zip_url else main_zip_url
-            return f'https://www.curseforge.com{zip_url}/file'
+            latest_release = next(version for version in self.versions() if version.type >= self.addon_version)
+            return latest_release.download_link
         except Exception as e:
             raise self.download_error() from e
 
@@ -125,8 +118,8 @@ class Curse(AbstractSite):
 
         Returns the name of the most recent release.
         """
-        latest_release = next(version.name for version in self.versions() if version.type >= self.addon_version)
-        return latest_release
+        latest_release = next(version for version in self.versions() if version.type >= self.addon_version)
+        return latest_release.name
 
     @classmethod
     def _convert_old_curse_urls(cls, url: str) -> str:
