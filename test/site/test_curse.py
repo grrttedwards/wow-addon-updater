@@ -1,9 +1,11 @@
 import unittest
 from dataclasses import dataclass
 from typing import Collection
+from unittest.mock import MagicMock, patch
 
 from updater.site import curse
-from updater.site.enum import GameVersion
+from updater.site.enum import AddonVersion, GameVersion
+from test.testutils import get_file
 
 
 @dataclass
@@ -32,6 +34,10 @@ version_test_data = [
                     version_regex=r"[0-9]+\.[0-9]+\.[0-9]+",
                     supported_game_versions=ALL_VERSIONS)
 ]
+
+MOCK_VERSION_PAGE = MagicMock()
+with open(get_file('mock-curse-version-addons-simc.html'), 'r') as f:
+    MOCK_VERSION_PAGE.text = f.read()
 
 
 class TestCurse(unittest.TestCase):
@@ -71,6 +77,22 @@ class TestCurse(unittest.TestCase):
         classiccodex = version_test_data[0]
         c = curse.Curse(classiccodex.url, GameVersion.retail)
         self.assertRaises(curse.SiteError, c.get_latest_version)
+
+    @patch.object(curse.Curse.session, 'get', MagicMock(return_value=MOCK_VERSION_PAGE))
+    def test_curse_versions_parsing(self):
+        # The curse object is a throwaway here
+        _ = version_test_data[1]
+        d = curse.Curse(_.url, GameVersion.retail, AddonVersion.release)
+        # This mock pulls a static example of a curse addon files page for testing
+        expected_results = [
+            (AddonVersion.release, 'v1.12.5'),
+            (AddonVersion.beta, 'v1.12.0-beta-2'),
+            (AddonVersion.alpha, 'v9.0.1-alpha-8')
+        ]
+        for addon_version, expected_value in expected_results:
+            with self.subTest((addon_version, expected_value)):
+                d.addon_version = addon_version
+                self.assertEqual(d.get_latest_version(), expected_value)
 
 
 if __name__ == '__main__':
