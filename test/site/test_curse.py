@@ -1,14 +1,36 @@
 import unittest
+from dataclasses import dataclass
+from typing import Collection
 
 from updater.site import curse
 from updater.site.enum import GameVersion
 
+
+@dataclass
+class VersionTestData:
+    url: str
+    version_regex: str
+    supported_game_versions: Collection[GameVersion]
+
+
+ALL_VERSIONS = (GameVersion.classic, GameVersion.retail, GameVersion.agnostic)
+
 version_test_data = [
-    ['https://www.curseforge.com/wow/addons/classiccodex', r'[0-9]+\.[0-9]+\.[0-9]+'],
-    ['https://www.curseforge.com/wow/addons/bartender4', r"[0-9]+\.[0-9]+\.[0-9]+"],
-    ['https://www.curseforge.com/wow/addons/big-wigs', r"v[0-9]+"],
-    ['https://www.curseforge.com/wow/addons/deadly-boss-mods', r"[0-9]+\.[0-9]+\.[0-9]+"],
-    ['https://www.curseforge.com/wow/addons/weakauras-2', r"[0-9]+\.[0-9]+\.[0-9]+"]
+    VersionTestData(url='https://www.curseforge.com/wow/addons/classiccodex',
+                    version_regex=r'[0-9]+\.[0-9]+\.[0-9]+',
+                    supported_game_versions=(GameVersion.classic, GameVersion.agnostic)),
+    VersionTestData(url='https://www.curseforge.com/wow/addons/bartender4',
+                    version_regex=r"[0-9]+\.[0-9]+\.[0-9]+",
+                    supported_game_versions=ALL_VERSIONS),
+    VersionTestData(url='https://www.curseforge.com/wow/addons/big-wigs',
+                    version_regex=r"v[0-9]+",
+                    supported_game_versions=ALL_VERSIONS),
+    VersionTestData(url='https://www.curseforge.com/wow/addons/deadly-boss-mods',
+                    version_regex=r"[0-9]+\.[0-9]+\.[0-9]+",
+                    supported_game_versions=ALL_VERSIONS),
+    VersionTestData(url='https://www.curseforge.com/wow/addons/weakauras-2',
+                    version_regex=r"[0-9]+\.[0-9]+\.[0-9]+",
+                    supported_game_versions=ALL_VERSIONS)
 ]
 
 
@@ -30,13 +52,13 @@ class TestCurse(unittest.TestCase):
         self.assertEqual(addon_name, 'bartender4')
 
     def test_integration_curse_get_latest_version(self):
-        for url, version_regex in version_test_data:
-            for game_version in GameVersion.__members__.values():
-                with self.subTest((game_version, url, version_regex)):
-                    c = curse.Curse(url, game_version)
+        for vtd in version_test_data:
+            for game_version in vtd.supported_game_versions:
+                with self.subTest((game_version, vtd.url, vtd.version_regex)):
+                    c = curse.Curse(vtd.url, game_version)
                     latest_version = c.get_latest_version()
                     # something like 4.5.6, or v163
-                    self.assertRegex(latest_version, version_regex)
+                    self.assertRegex(latest_version, vtd.version_regex)
 
     def test_curse_get_supported_urls(self):
         supported_urls = self.curse.get_supported_urls()
