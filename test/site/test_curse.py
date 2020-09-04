@@ -65,6 +65,13 @@ class TestCurse(unittest.TestCase):
         self.assertIsNotNone(supported_urls)
         self.assertTrue(len(supported_urls) != 0)
 
+    def test_curse_unsupported_game_version(self):
+        # classiccodex should throw an version error when searching for an
+        # unsupported retail game version
+        classiccodex = version_test_data[0]
+        c = curse.Curse(classiccodex.url, GameVersion.retail)
+        self.assertRaises(curse.SiteError, c.get_latest_version)
+
 
 if __name__ == '__main__':
     unittest.main()
