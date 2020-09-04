@@ -27,6 +27,7 @@ class CurseAddonVersion:
     def from_tr(cls, tr: bs4.element.Tag):
         cells = tr.find_all('td')
         name = cells[1].text.strip()
+        name = name if '\n' not in name else name.split('\n')[0]
         size = cells[2].text.strip()
         uploaded = datetime.fromtimestamp(int(cells[3].find('abbr').attrs.get('data-epoch'))).isoformat()
         game_version = cells[4].text.strip()
