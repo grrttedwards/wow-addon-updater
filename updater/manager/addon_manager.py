@@ -8,13 +8,14 @@ import zipfile
 from io import BytesIO
 from multiprocessing.pool import ThreadPool
 from os.path import isfile, isdir, join
+from typing import List
 
 import requests
 from requests import HTTPError
 
 from updater.site import site_handler, github, tukui
 from updater.site.abstract_site import SiteError, AbstractSite
-from updater.site.enum import GameVersion
+from updater.site.enum import AddonVersion, GameVersion
 
 logger = logging.getLogger(__name__)
 
@@ -78,10 +79,13 @@ class AddonManager:
         self.explain_curse_error()
 
     def update_addon(self, addon_entry):
-        # Expected format: "mydomain.com/myaddon" or "mydomain.com/myaddon|subfolder"
+        # Expected format: "mydomain.com/myaddon" or "mydomain.com/myaddon|subfolder [version_track]"
+        addon_entry, *addon_version_track = addon_entry.split(' ')
         addon_url, *subfolder = addon_entry.split('|')
 
-        site = site_handler.get_handler(addon_url, self.game_version)
+        addon_version_track = self.validate_addon_version_track(addon_version_track)
+
+        site = site_handler.get_handler(addon_url, self.game_version, addon_version_track)
 
         try:
             addon_name = site.get_addon_name()
@@ -199,3 +203,16 @@ class AddonManager:
                 ])
                 logger.info('\n\n' + message)
                 return
+
+    @staticmethod
+    def validate_addon_version_track(version_track: List[str]) -> AddonVersion:
+        if not version_track:  # Fallback to release version if omitted
+            return AddonVersion.release
+
+        cleaned = version_track[0].strip().lower()
+        if cleaned == 'alpha':
+            return AddonVersion.alpha
+        elif cleaned == 'beta':
+            return AddonVersion.beta
+        else:
+            return AddonVersion.release

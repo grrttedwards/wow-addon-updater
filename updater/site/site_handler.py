@@ -1,6 +1,6 @@
 from updater.site.abstract_site import AbstractSite
 from updater.site.curse import Curse
-from updater.site.enum import GameVersion
+from updater.site.enum import AddonVersion, GameVersion
 from updater.site.github import GitHub
 from updater.site.tukui import Tukui
 from updater.site.wowace import WoWAce
@@ -11,9 +11,9 @@ class UnknownSiteError(RuntimeError):
     pass
 
 
-def get_handler(url: str, game_version: GameVersion) -> AbstractSite:
+def get_handler(url: str, game_version: GameVersion, addon_version: AddonVersion) -> AbstractSite:
     if Curse.handles(url):
-        return Curse(url, game_version)
+        return Curse(url, game_version, addon_version)
     elif WoWAce.handles(url):
         return WoWAce(url, game_version)
     elif Tukui.handles(url):
