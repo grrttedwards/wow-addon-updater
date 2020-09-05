@@ -27,3 +27,5 @@ desktop.ini
 build/
 dist/
 wow_addon_updater.egg-info/
+
+test-addon-directory/
