@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 from updater.site import site_handler
 from updater.site.curse import Curse
-from updater.site.enum import GameVersion
+from updater.site.enum import AddonVersion, GameVersion
 from updater.site.tukui import Tukui
 from updater.site.wowace import WoWAce
 from updater.site.wowinterface import WoWInterface
@@ -15,6 +15,14 @@ class TestSiteHandler(unittest.TestCase):
             Curse._convert_old_curse_urls = MagicMock(return_value=url)
             handler = site_handler.get_handler(url, GameVersion.retail)
             self.assertIsInstance(handler, Curse)
+
+    def test_handles_curse_prerelease(self):
+        addon_versions = AddonVersion.__members__.values()
+        for url in Curse.get_supported_urls():
+            Curse._convert_old_curse_urls = MagicMock(return_value=url)
+            for version in addon_versions:
+                handler = site_handler.get_handler(url, GameVersion.retail, version)
+                self.assertEqual(handler.addon_version, version)
 
     def test_handles_wowace(self):
         for url in WoWAce.get_supported_urls():
