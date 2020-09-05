@@ -9,7 +9,7 @@ from updater.manager import addon_manager
 from updater.manager.addon_manager import AddonManager
 from updater.site import curse, github
 from updater.site.abstract_site import AbstractSite, SiteError
-from updater.site.enum import GameVersion
+from updater.site.enum import AddonVersion, GameVersion
 
 
 class MockSite(AbstractSite):
@@ -131,6 +131,16 @@ class TestAddonManager(unittest.TestCase):
             os.mkdir(existing_addon_dir)
             self.assertRaises(KeyError, extract_should_fail)
             self.assertTrue(os.path.isdir(existing_addon_dir))
+
+    def test_curse_prerelease_track(self):
+        tracks = ('alpha', 'beta', 'release', 'aalpha')
+        expected_versions = (AddonVersion.alpha, AddonVersion.beta, AddonVersion.release, AddonVersion.release)
+        addon_entry_strings = [f'https://www.curseforge.com/wow/addons/rarescanner {track}' for track in tracks]
+        for addon_entry, version in zip(addon_entry_strings, expected_versions):
+            with self.subTest((addon_entry, version)):
+                _, *addon_version_track = addon_entry.split(' ')
+                out = self.manager.validate_addon_version_track(addon_version_track)
+                self.assertEqual(out, version)
 
 
 if __name__ == '__main__':
