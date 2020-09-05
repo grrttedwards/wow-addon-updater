@@ -1,5 +1,6 @@
 # Addon input files
 addons.txt
+in.txt
 installed.ini
 addons-classic.txt
 addons-retail.txt
@@ -21,3 +22,8 @@ desktop.ini
 \.coverage
 
 *.log
+
+# Python setuptools cache
+build/
+dist/
+wow_addon_updater.egg-info/

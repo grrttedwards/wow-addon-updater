@@ -51,6 +51,24 @@ To run directly from the command line, use `pipenv run`:
 pipenv run python -m updater [-c FILE]
 ```
 
+Alternatively you can install the python module and have a command named `wow-addon-updater` available:
+```bash
+pipenv install
+pipenv shell
+# Make sure you're in a virtual environment! pipenv shell should place you in the venv
+# created by `pipenv install` but to be sure you can check with `which python` and
+# verify that it's $VIRTUAL_ENV/bin/python
+
+# Either using the distutils method
+python setup.py install
+# Or using pip
+pip install .
+# Make sure the command is where we expect
+which wow-addon-updater
+# This should output $VIRTUAL_ENV/bin/wow-addon-updater
+
+```
+
 More advanced usage includes optionally specifying a configuration file, which is detailed in the next section.
 
 ## Issues Downloading Addons?
@@ -149,6 +167,11 @@ or tests with coverage:
 ```bash
 pipenv run coverage run --source=updater -m unittest -v
 pipenv run coverage report
+```
+
+Updating deps in setup.py:
+```bash
+pipenv-setup sync -d
 ```
 
 1. Submit Issues, PR's, or make general comments
