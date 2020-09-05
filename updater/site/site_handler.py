@@ -11,7 +11,8 @@ class UnknownSiteError(RuntimeError):
     pass
 
 
-def get_handler(url: str, game_version: GameVersion, addon_version: AddonVersion) -> AbstractSite:
+def get_handler(url: str, game_version: GameVersion,
+                addon_version: AddonVersion = AddonVersion.release) -> AbstractSite:
     if Curse.handles(url):
         return Curse(url, game_version, addon_version)
     elif WoWAce.handles(url):
