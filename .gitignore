@@ -9,6 +9,7 @@ config-classic.ini
 config-retail.ini
 config-test.ini
 installed-classic.ini
+installed-retail.ini
 installed-test.ini
 
 # Settings for IntelliJ
