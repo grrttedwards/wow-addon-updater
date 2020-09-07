@@ -136,7 +136,7 @@ https://www.github.com/some-user/some-addon-repo|AddOn
 
 ### Tracking alpha/beta addon releases from Curse
 If you are running a beta or PTR version of the game or are simply interested in testing out the latest features of an addon, you may want to update as
-they release alpha or beta versions are released. You can specify which version releases you would like to follow by including `alpha`
+alpha or beta versions are released. You can specify which version releases you would like to follow by including `alpha`
 or `beta` after a space following the addon URL, see below:
 
 ```
