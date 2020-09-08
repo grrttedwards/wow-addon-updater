@@ -76,8 +76,7 @@ class Curse(AbstractSite):
 
     def find_zip_url(self):
         try:
-            latest_release = next(version for version in self.versions() if version.type >= self.addon_version)
-            return latest_release.download_link
+            return self.latest_release().download_link
         except Exception as e:
             raise self.download_error() from e
 
@@ -110,6 +109,10 @@ class Curse(AbstractSite):
         except Exception as e:
             raise self.version_error() from e
 
+    def latest_release(self) -> CurseAddonVersion:
+        latest = next(version for version in self.versions() if version.type >= self.addon_version)
+        return latest
+
     def get_latest_version(self) -> str:
         """Returns the latest version released for retail/classic
 
@@ -120,8 +123,7 @@ class Curse(AbstractSite):
 
         Returns the name of the most recent release.
         """
-        latest_release = next(version for version in self.versions() if version.type >= self.addon_version)
-        return latest_release.name
+        return self.latest_release().name
 
     @classmethod
     def _convert_old_curse_urls(cls, url: str) -> str:
