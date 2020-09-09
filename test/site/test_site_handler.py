@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from updater.site import site_handler
 from updater.site.curse import Curse
@@ -10,16 +10,16 @@ from updater.site.wowinterface import WoWInterface
 
 
 class TestSiteHandler(unittest.TestCase):
+    @patch.object(Curse, '_normalize_curse_urls', MagicMock(return_value=''))
     def test_handles_curse(self):
         for url in Curse.get_supported_urls():
-            Curse._convert_old_curse_urls = MagicMock(return_value=url)
             handler = site_handler.get_handler(url, GameVersion.retail)
             self.assertIsInstance(handler, Curse)
 
+    @patch.object(Curse, '_normalize_curse_urls', MagicMock(return_value=''))
     def test_handles_curse_prerelease(self):
         addon_versions = AddonVersion.__members__.values()
         for url in Curse.get_supported_urls():
-            Curse._convert_old_curse_urls = MagicMock(return_value=url)
             for version in addon_versions:
                 handler = site_handler.get_handler(url, GameVersion.retail, version)
                 self.assertEqual(handler.addon_version, version)

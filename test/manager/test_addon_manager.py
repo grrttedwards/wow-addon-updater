@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 import zipfile
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 
 from test import testutils
 from updater.manager import addon_manager
@@ -86,6 +86,7 @@ class TestAddonManager(unittest.TestCase):
         self.manager.update_addon(TEST_URL)
         self.assertFailedInstall()
 
+    @patch.object(curse.Curse, '_normalize_curse_urls', MagicMock(return_value=''))
     def test_extract_archive_subfolder(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             self.extractAddon('some-fake-addon-with-many-folders.zip', temp_dir, curse.Curse("", GameVersion.retail),
@@ -98,6 +99,7 @@ class TestAddonManager(unittest.TestCase):
                               subfolder='sub-folder')
             self.assertExtractionSuccess(temp_dir, 'sub-folder', 'file1.txt')
 
+    @patch.object(curse.Curse, '_normalize_curse_urls', MagicMock(return_value=''))
     def test_extract_entire_archive(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             self.extractAddon('some-fake-addon.zip', temp_dir, curse.Curse("", GameVersion.retail))
@@ -108,11 +110,13 @@ class TestAddonManager(unittest.TestCase):
             self.extractAddon('some-fake-addon-master.zip', temp_dir, github.GitHub(""))
             self.assertExtractionSuccess(temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')
 
+    @patch.object(curse.Curse, '_normalize_curse_urls', MagicMock(return_value=''))
     def test_extract_entire_archive_curse(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             self.extractAddon('some-fake-addon-from-curse.zip', temp_dir, curse.Curse("", GameVersion.retail))
             self.assertExtractionSuccess(temp_dir, 'AddonName', 'sub-folder', 'file1.txt')
 
+    @patch.object(curse.Curse, '_normalize_curse_urls', MagicMock(return_value=''))
     def test_extract_archive_with_multiple_folders(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             self.extractAddon('some-fake-addon-with-many-folders.zip', temp_dir, curse.Curse("", GameVersion.retail))

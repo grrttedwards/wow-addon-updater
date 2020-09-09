@@ -70,7 +70,7 @@ class Curse(AbstractSite):
     session = cloudscraper.create_scraper(browser=CURSE_UA)
 
     def __init__(self, url: str, game_version: GameVersion, addon_version: AddonVersion = AddonVersion.release):
-        url = Curse._convert_old_curse_urls(url)
+        url = Curse._normalize_curse_urls(url)
         super().__init__(url, game_version)
         self.addon_version = addon_version
 
@@ -126,15 +126,12 @@ class Curse(AbstractSite):
         return self.latest_release().name
 
     @classmethod
-    def _convert_old_curse_urls(cls, url: str) -> str:
-        if any(old_url in url for old_url in [Curse._OLD_URL, Curse._OLD_PROJECT_URL]):
-            try:
-                # Some old URL's may point to nonexistent pages. Rather than guess at what the new
-                # name and URL is, just try to load the old URL and see where Curse redirects us to.
-                page = Curse.session.get(url)
-                page.raise_for_status()
-                return page.url
-            except Exception as e:
-                raise SiteError(f"Failed to find the current page for old URL: {url}") from e
-        else:
-            return url
+    def _normalize_curse_urls(cls, url: str) -> str:
+        try:
+            # Some old URLs may point to nonexistent pages. Rather than guess at what the new
+            # name and URL is, just try to load the old URL and see where Curse redirects us to.
+            page = Curse.session.get(url)
+            page.raise_for_status()
+            return page.url
+        except Exception as e:
+            raise SiteError(f"Failed to find the current page for old URL: {url}") from e

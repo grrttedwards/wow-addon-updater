@@ -35,6 +35,10 @@ version_test_data = [
                     supported_game_versions=ALL_VERSIONS)
 ]
 
+url_redirect_test_data = VersionTestData(url='https://www.curseforge.com/wow/addons/method-dungeon-tools',
+                                         version_regex=r'v[0-9]+\.[0-9]+\.[0-9]+',
+                                         supported_game_versions=(GameVersion.retail, GameVersion.agnostic))
+
 MOCK_VERSION_PAGE = MagicMock()
 with open(get_file('mock-curse-version-addons-simc.html'), 'r') as f:
     MOCK_VERSION_PAGE.text = f.read()
@@ -93,6 +97,14 @@ class TestCurse(unittest.TestCase):
             with self.subTest((addon_version, expected_value)):
                 d.addon_version = addon_version
                 self.assertEqual(d.get_latest_version(), expected_value)
+
+    def test_curse_url_redirect(self):
+        test_data = url_redirect_test_data
+        for game_version in test_data.supported_game_versions:
+            with self.subTest((game_version, test_data.url, test_data.version_regex)):
+                c = curse.Curse(test_data.url, game_version)
+                latest_version = c.get_latest_version()
+                self.assertRegex(latest_version, test_data.version_regex)
 
 
 if __name__ == '__main__':
