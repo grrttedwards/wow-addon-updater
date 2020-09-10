@@ -1,5 +1,6 @@
 # Addon input files
 addons.txt
+in.txt
 installed.ini
 addons-classic.txt
 addons-retail.txt
@@ -8,6 +9,7 @@ config-classic.ini
 config-retail.ini
 config-test.ini
 installed-classic.ini
+installed-retail.ini
 installed-test.ini
 
 # Settings for IntelliJ
@@ -21,3 +23,10 @@ desktop.ini
 \.coverage
 
 *.log
+
+# Python setuptools cache
+build/
+dist/
+wow_addon_updater.egg-info/
+
+test-addon-directory/
