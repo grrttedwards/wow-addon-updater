@@ -2,14 +2,14 @@ import os
 import tempfile
 import unittest
 import zipfile
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 
 from test import testutils
 from updater.manager import addon_manager
 from updater.manager.addon_manager import AddonManager
 from updater.site import curse, github
 from updater.site.abstract_site import AbstractSite, SiteError
-from updater.site.enum import GameVersion
+from updater.site.enum import AddonVersion, GameVersion
 
 
 class MockSite(AbstractSite):
@@ -86,6 +86,7 @@ class TestAddonManager(unittest.TestCase):
         self.manager.update_addon(TEST_URL)
         self.assertFailedInstall()
 
+    @patch.object(curse.Curse, '_normalize_curse_urls', MagicMock(return_value=''))
     def test_extract_archive_subfolder(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             self.extractAddon('some-fake-addon-with-many-folders.zip', temp_dir, curse.Curse("", GameVersion.retail),
@@ -98,6 +99,7 @@ class TestAddonManager(unittest.TestCase):
                               subfolder='sub-folder')
             self.assertExtractionSuccess(temp_dir, 'sub-folder', 'file1.txt')
 
+    @patch.object(curse.Curse, '_normalize_curse_urls', MagicMock(return_value=''))
     def test_extract_entire_archive(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             self.extractAddon('some-fake-addon.zip', temp_dir, curse.Curse("", GameVersion.retail))
@@ -108,11 +110,13 @@ class TestAddonManager(unittest.TestCase):
             self.extractAddon('some-fake-addon-master.zip', temp_dir, github.GitHub(""))
             self.assertExtractionSuccess(temp_dir, 'some-fake-addon', 'sub-folder', 'file1.txt')
 
+    @patch.object(curse.Curse, '_normalize_curse_urls', MagicMock(return_value=''))
     def test_extract_entire_archive_curse(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             self.extractAddon('some-fake-addon-from-curse.zip', temp_dir, curse.Curse("", GameVersion.retail))
             self.assertExtractionSuccess(temp_dir, 'AddonName', 'sub-folder', 'file1.txt')
 
+    @patch.object(curse.Curse, '_normalize_curse_urls', MagicMock(return_value=''))
     def test_extract_archive_with_multiple_folders(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             self.extractAddon('some-fake-addon-with-many-folders.zip', temp_dir, curse.Curse("", GameVersion.retail))
@@ -131,6 +135,16 @@ class TestAddonManager(unittest.TestCase):
             os.mkdir(existing_addon_dir)
             self.assertRaises(KeyError, extract_should_fail)
             self.assertTrue(os.path.isdir(existing_addon_dir))
+
+    def test_curse_prerelease_track(self):
+        tracks = ('alpha', 'beta', 'release', 'aalpha')
+        expected_versions = (AddonVersion.alpha, AddonVersion.beta, AddonVersion.release, AddonVersion.release)
+        addon_entry_strings = [f'https://www.curseforge.com/wow/addons/rarescanner {track}' for track in tracks]
+        for addon_entry, version in zip(addon_entry_strings, expected_versions):
+            with self.subTest((addon_entry, version)):
+                _, *addon_version_track = addon_entry.split(' ')
+                out = self.manager.validate_addon_version_track(addon_version_track)
+                self.assertEqual(out, version)
 
 
 if __name__ == '__main__':
