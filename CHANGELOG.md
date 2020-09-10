@@ -1,8 +1,11 @@
 # Changelog
 
 ## Unreleased
-- Add support for installing as a module and have a command named `wow-addon-updater` available.
-- Add ability to follow `alpha`, `beta`, or `release` tracks for addons hosted on Curse.
+- 
+
+## v1.8.0 - 09/09/2020
+- Add support for installing as a module and have a command named `wow-addon-updater` available. (Thanks @elebertus)
+- Add ability to follow `alpha`, `beta`, or `release` tracks for addons hosted on Curse. (Thanks @amas0)
 
 ## v1.7.1 - 04/29/2020
 - Fix a regression and actually enable all of the Tukui/ElvUI family addons to work, including both retail and classic.
