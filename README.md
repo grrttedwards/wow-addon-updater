@@ -153,6 +153,22 @@ If you want to extract a subfolder from the default downloaded folder, add a pip
 https://www.github.com/some-user/some-addon-repo|AddOn
 ```
 
+## Tracking alpha/beta addon releases from Curse
+If you are running a beta or PTR version of the game or are simply interested in testing out the latest features of an addon, you may want to update as
+alpha or beta versions are released. You can specify which version releases you would like to follow by including `alpha`
+or `beta` after a space following the addon URL, see below:
+
+```
+https://www.curseforge.com/wow/addons/deadly-boss-mods beta
+https://www.curseforge.com/wow/addons/auctionator alpha
+```
+
+The updater will follow a hierarchy of release versions, meaning that tracking the "alpha" releases will pull more recent beta or full releases. 
+Likewise, following beta will pull newer full release versions while ignoring alpha releases.
+
+Omitting the release option or incorrectly specifying it will automatically fall back on tracking the offical
+release track.
+
 # Contributing
 Bring up the dev `pipenv` with:
 ```bash
