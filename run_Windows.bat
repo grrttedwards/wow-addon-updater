@@ -1,3 +1,3 @@
 @echo off
-pipenv run python -m updater
+python -m pipenv run python -m updater
 PAUSE
