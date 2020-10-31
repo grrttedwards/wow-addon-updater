@@ -28,7 +28,7 @@ def error(message: str):
 def normalize_path(path: str) -> str:
     env = platform.platform().lower()
     if 'linux' in env and 'microsoft' in env:
-        return subprocess.check_output(['wslpath', path], text=True)
+        return subprocess.check_output(['wslpath', path], text=True).strip()
     return path
 
 
