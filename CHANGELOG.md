@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- 
+- Fix the tukui regex that finds the version number to install and record.
 
 ## v1.8.0 - 09/09/2020
 - Add support for installing as a module and have a command named `wow-addon-updater` available. (Thanks @elebertus)
