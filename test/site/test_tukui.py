@@ -7,7 +7,8 @@ version_test_data = [
     ['https://www.tukui.org/classic-addons.php?id=2', 'https://www.tukui.org/classic-addons.php?download=2', 'ElvUI'],
     ['https://www.tukui.org/download.php?ui=tukui', 'https://www.tukui.org/downloads/tukui-', 'Tukui'],
     ['https://www.tukui.org/download.php?ui=elvui', 'https://www.tukui.org/downloads/elvui-', 'ElvUI'],
-    ['https://www.tukui.org/addons.php?id=3', 'https://www.tukui.org/addons.php?download=3', 'AddOnSkins']
+    ['https://www.tukui.org/addons.php?id=3', 'https://www.tukui.org/addons.php?download=3', 'AddOnSkins'],
+    ['https://www.tukui.org/addons.php?id=186', 'https://www.tukui.org/addons.php?download=186', 'CopyPasta2']
 ]
 
 
