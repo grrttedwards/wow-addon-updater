@@ -18,7 +18,7 @@ class Tukui(AbstractSite):
 
     _page: BeautifulSoup = None
 
-    _version_pattern = r'(?P<version>[\d]+\.[\d]+)'
+    _version_pattern = r'(?P<version>([\d]+\.)+[\d]+([\d]+)?)'
 
     def __init__(self, url: str):
         super().__init__(url, GameVersion.agnostic)
@@ -47,12 +47,12 @@ class Tukui(AbstractSite):
     def get_latest_version(self):
         try:
             if self._is_special_tukui_link():
-                version = re.search(self._version_pattern, self.find_zip_url()).group(1)
+                version = re.search(self._version_pattern, self.find_zip_url()).group('version')
             else:
                 response = Tukui.session.get(self.url + '#extras')
                 response.raise_for_status()
                 text = response.text
-                version = re.search(f'>{self._version_pattern}<', text).group(1)
+                version = re.search(f'>{self._version_pattern}<', text).group('version')
             self.latest_version = version
             return version
         except Exception as e:

@@ -4,6 +4,7 @@
 - Upgrade dependency versions to fix broken Curse addons
 - Fix for better support running in WSL
 - Fix for the run_Windows.bat file not relying so much on PATH
+- Fix the tukui regex that finds the version number to install and record.
 
 ## v1.8.0 - 09/09/2020
 - Add support for installing as a module and have a command named `wow-addon-updater` available. (Thanks @elebertus)
