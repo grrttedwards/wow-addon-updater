@@ -8,7 +8,7 @@ version_test_data = [
     ['https://www.wowace.com/projects/bartender4', r'[0-9]+\.[0-9]+\.[0-9]+'],
     ['https://www.wowace.com/projects/shadowed-unit-frames', r'v[0-9]+'],
     ['https://www.wowace.com/projects/acp', r'[0-9]+\.[0-9]+\.[0-9]+'],
-    ['https://www.wowace.com/projects/weakauras-2', r'[0-9]+\.[0-9]+\.[0-9]+']
+    #['https://www.wowace.com/projects/weakauras-2', r'[0-9]+\.[0-9]+\.[0-9]+']
 ]
 
 class TestWowAce(unittest.TestCase):
