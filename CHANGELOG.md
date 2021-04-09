@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+-
+
+## v1.8.1 - 04/09/2021
 - Upgrade dependency versions to fix broken Curse addons
 - Fix for better support running in WSL
 - Fix for the run_Windows.bat file not relying so much on PATH
