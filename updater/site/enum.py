@@ -5,6 +5,7 @@ class GameVersion(Enum):
     agnostic = auto()
     retail = auto()
     classic = auto()
+    tbc = auto()
 
 
 class AddonVersion(IntEnum):
