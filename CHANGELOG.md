@@ -3,6 +3,9 @@
 ## Unreleased
 -
 
+## v1.9.0 - 05/19/2020
+- Add support for TBC Classic addons from Curse
+
 ## v1.8.1 - 04/09/2021
 - Upgrade dependency versions to fix broken Curse addons
 - Fix for better support running in WSL
