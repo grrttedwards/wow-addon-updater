@@ -88,7 +88,7 @@ class Curse(AbstractSite):
         """
         if self.game_version == GameVersion.classic:
             game_version_filter = '1738749986:67408'
-        if self.game_version == GameVersion.tbc:
+        elif self.game_version == GameVersion.tbc:
             game_version_filter = '1738749986:73246'
         elif self.game_version == GameVersion.retail:
             game_version_filter = '1738749986:517'
