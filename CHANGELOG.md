@@ -1,8 +1,11 @@
 # Changelog
 
 ## Unreleased
+-
+
+## v1.9.1 - 06/06/2020
 - Bump version of urllib3 for a security update
-- Fix Curse site choosing wrong version when game version is Classic
+- Fix Curse site choosing wrong version when game version is Classic (Thanks @cr0ok)
 
 ## v1.9.0 - 05/19/2020
 - Add support for TBC Classic addons from Curse
