@@ -172,8 +172,12 @@ class AddonManager:
     def set_installed_versions(self):
         versions = {}
         for (addon_name, addon_url, _, new_version) in sorted(self.manifest):
-            if new_version != AddonManager._UNAVAILABLE:
-                versions[addon_name] = {"url": addon_url, "version": new_version}
+            # prevent an entry from zeroing out if the new version fails
+            # set the entry either to what it is now, or just skip if there was no old version
+            existing_version = self.get_installed_version(addon_name)
+            version = existing_version if new_version == AddonManager._UNAVAILABLE else new_version
+            if version is not None:
+                versions[addon_name] = {"url": addon_url, "version": version}
 
         installed_versions = configparser.ConfigParser()
         installed_versions.read_dict(versions)
