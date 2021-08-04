@@ -1,7 +1,8 @@
 # Changelog
 
 ## Unreleased
--
+- Fix bug where an entry in `installed.ini` could be zeroed out if there was an error updating the addon
+- Remove broken test case where addon was removed from Tukui repository
 
 ## v1.9.1 - 06/06/2020
 - Bump version of urllib3 for a security update
