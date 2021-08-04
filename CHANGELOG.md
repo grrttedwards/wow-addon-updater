@@ -1,14 +1,17 @@
 # Changelog
 
 ## Unreleased
+-
+
+## v1.9.2 - 08/03/2021
 - Fix bug where an entry in `installed.ini` could be zeroed out if there was an error updating the addon
 - Remove broken test case where addon was removed from Tukui repository
 
-## v1.9.1 - 06/06/2020
+## v1.9.1 - 06/06/2021
 - Bump version of urllib3 for a security update
 - Fix Curse site choosing wrong version when game version is Classic (Thanks @cr0ok)
 
-## v1.9.0 - 05/19/2020
+## v1.9.0 - 05/19/2021
 - Add support for TBC Classic addons from Curse
 
 ## v1.8.1 - 04/09/2021
