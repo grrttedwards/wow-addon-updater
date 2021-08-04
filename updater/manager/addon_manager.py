@@ -8,7 +8,7 @@ import zipfile
 from io import BytesIO
 from multiprocessing.pool import ThreadPool
 from os.path import isfile, isdir, join
-from typing import List
+from typing import List, Optional
 
 import requests
 from requests import HTTPError
@@ -161,7 +161,7 @@ class AddonManager:
                 # no subfolder and no folder renaming needed, just copy the entire archive contents as-is
                 zipped.extractall(path=self.wow_addon_location)
 
-    def get_installed_version(self, addon_name):
+    def get_installed_version(self, addon_name: str) -> Optional[str]:
         installed_vers = configparser.ConfigParser()
         installed_vers.read(self.installed_vers_file)
         try:
@@ -169,11 +169,15 @@ class AddonManager:
         except (configparser.NoSectionError, configparser.NoOptionError):
             return None
 
-    def set_installed_versions(self):
+    def set_installed_versions(self) -> None:
         versions = {}
         for (addon_name, addon_url, _, new_version) in sorted(self.manifest):
-            if new_version != AddonManager._UNAVAILABLE:
-                versions[addon_name] = {"url": addon_url, "version": new_version}
+            # prevent an entry from zeroing out if the new version fails
+            # set the entry either to what it is now, or just skip if there was no old version
+            existing_version = self.get_installed_version(addon_name)
+            version = existing_version if new_version == AddonManager._UNAVAILABLE else new_version
+            if version is not None:
+                versions[addon_name] = {"url": addon_url, "version": version}
 
         installed_versions = configparser.ConfigParser()
         installed_versions.read_dict(versions)
