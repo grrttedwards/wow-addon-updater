@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import re
 
 from updater.site.abstract_site import AbstractSite
 from updater.site.enum import GameVersion
@@ -15,6 +16,10 @@ class GitHub(AbstractSite):
 
     def __init__(self, url: str):
         super().__init__(url, GameVersion.agnostic)
+
+    @classmethod
+    def handles(cls, url: str) -> bool:
+        return bool(re.match('^https://(www.)?github.com/[^/]+/[^/]+/?$', url))
 
     def find_zip_url(self):
         return self.url + '/archive/master.zip'
