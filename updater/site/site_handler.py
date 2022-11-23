@@ -13,6 +13,7 @@ class UnknownSiteError(RuntimeError):
 
 
 def get_handler(url: str, game_version: GameVersion,
+                site_credentials: dict[str, dict[str, str]],
                 addon_version: AddonVersion = AddonVersion.release) -> AbstractSite:
     if Curse.handles(url):
         return Curse(url, game_version, addon_version)
@@ -25,7 +26,7 @@ def get_handler(url: str, game_version: GameVersion,
     elif GitHub.handles(url):
         return GitHub(url)
     elif GitHubRelease.handles(url):
-        return GitHubRelease(url)
+        return GitHubRelease(url, site_credentials.get("GitHub"))
 
     # for subclass in Site.__subclasses__():
     #     if subclass.handles(url):

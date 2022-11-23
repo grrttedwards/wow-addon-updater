@@ -2,6 +2,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
+from typing import Optional
 from updater.site.abstract_site import AbstractSite
 from updater.site.github import GitHub
 from updater.site.enum import GameVersion
@@ -12,19 +13,25 @@ class GitHubRelease(AbstractSite):
 
     session = requests.session()
 
-    def __init__(self, url: str):
+    def __init__(self, url: str, credentials: Optional[dict[str, str]]):
+        self.auth = None
+        if credentials:
+            self.auth = requests.auth.HTTPBasicAuth(
+                credentials["username"],
+                credentials["token"],
+            )
         super().__init__(url, GameVersion.agnostic)
 
     @classmethod
     def handles(cls, url: str) -> bool:
-        v = bool(re.match('^https://(www.)?github.com/[^/]+/[^/]+/releases/?$', url))
         return bool(re.match('^https://(www.)?github.com/[^/]+/[^/]+/releases/?$', url))
 
     def find_zip_url(self):
         try:
             repo = self._get_repo_name()
             response = GitHubRelease.session.get(
-                f'https://api.github.com/repos/{repo}/releases'
+                f'https://api.github.com/repos/{repo}/releases',
+                auth=self.auth
             )
             response.raise_for_status()
             data = response.json()
@@ -46,7 +53,8 @@ class GitHubRelease(AbstractSite):
         try:
             repo = self._get_repo_name()
             response = GitHubRelease.session.get(
-                f'https://api.github.com/repos/{repo}/releases'
+                f'https://api.github.com/repos/{repo}/releases',
+                auth=self.auth
             )
             response.raise_for_status()
             data = response.json()
