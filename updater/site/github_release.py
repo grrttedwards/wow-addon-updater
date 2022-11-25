@@ -14,12 +14,9 @@ class GitHubRelease(AbstractSite):
     session = requests.session()
 
     def __init__(self, url: str, credentials: Optional[dict[str, str]]):
-        self.auth = None
-        if credentials:
-            self.auth = requests.auth.HTTPBasicAuth(
-                credentials["username"],
-                credentials["token"],
-            )
+        self.headers = {}
+        if credentials and (token := credentials.get("token")):
+            self.headers["authorization"] = f"token {token}"
         super().__init__(url, GameVersion.agnostic)
 
     @classmethod
@@ -31,7 +28,7 @@ class GitHubRelease(AbstractSite):
             repo = self._get_repo_name()
             response = GitHubRelease.session.get(
                 f'https://api.github.com/repos/{repo}/releases',
-                auth=self.auth
+                headers=self.headers,
             )
             response.raise_for_status()
             data = response.json()
@@ -39,7 +36,7 @@ class GitHubRelease(AbstractSite):
             for entry in data:
                 if not entry['draft'] and not entry['prerelease']:
                     for asset in entry['assets']:
-                        if asset['content_type'] == 'application/zip':
+                        if asset['content_type'] in {'application/zip', 'application/x-zip-compressed'}:
                             return asset['browser_download_url']
         except Exception as e:
             raise self.download_error() from e
@@ -54,16 +51,16 @@ class GitHubRelease(AbstractSite):
             repo = self._get_repo_name()
             response = GitHubRelease.session.get(
                 f'https://api.github.com/repos/{repo}/releases',
-                auth=self.auth
+                headers=self.headers,
             )
             response.raise_for_status()
             data = response.json()
             for entry in data:
                 if not entry['draft'] and not entry['prerelease']:
                     return entry['tag_name']
-            raise RuntimeError('Humm no valid version found')
         except Exception as e:
             raise self.version_error() from e
+        raise self.version_error()
 
     def get_addon_name(self):
         return self._get_repo_name().split('/')[-1]

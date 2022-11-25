@@ -53,7 +53,6 @@ class AddonManager:
             self.game_version = GameVersion[config['WOW ADDON UPDATER']['Game Version']]
             if "GitHub" in config:
                 self.site_credentials["GitHub"] = {
-                    "username": config["GitHub"]["username"],
                     "token": config["GitHub"]["token"],
                 }
         except Exception:
