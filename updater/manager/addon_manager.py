@@ -44,12 +44,17 @@ class AddonManager:
 
         config = configparser.ConfigParser()
         config.read(config_file)
+        self.site_credentials = {}
 
         try:
             self.wow_addon_location = config['WOW ADDON UPDATER']['WoW Addon Location']
             self.addon_list_file = config['WOW ADDON UPDATER']['Addon List File']
             self.installed_vers_file = config['WOW ADDON UPDATER']['Installed Versions File']
             self.game_version = GameVersion[config['WOW ADDON UPDATER']['Game Version']]
+            if "GitHub" in config:
+                self.site_credentials["GitHub"] = {
+                    "token": config["GitHub"]["token"],
+                }
         except Exception:
             error("Failed to parse configuration file. Are you sure it is formatted correctly?")
 
@@ -85,7 +90,9 @@ class AddonManager:
 
         addon_version_track = self.validate_addon_version_track(addon_version_track)
 
-        site = site_handler.get_handler(addon_url, self.game_version, addon_version_track)
+        site = site_handler.get_handler(
+            addon_url, self.game_version, self.site_credentials, addon_version_track
+        )
 
         try:
             addon_name = site.get_addon_name()

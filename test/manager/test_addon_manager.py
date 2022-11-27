@@ -42,6 +42,7 @@ class TestAddonManager(unittest.TestCase):
         self.manager.manifest = []
         self.manager.get_installed_version = Mock(return_value=EXP_INST_VERSION)
         self.manager.game_version = GameVersion.retail
+        self.manager.site_credentials = {}
 
         self.addCleanup(patcher.stop)
 
