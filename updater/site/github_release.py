@@ -43,7 +43,7 @@ class GitHubRelease(AbstractSite):
         raise self.download_error()
 
     def _get_repo_name(self):
-        _, owner, repo, _ = self.url.removeprefix('https://').split('/', 4)
+        _, owner, repo, _ = self.url.replace('https://', "", 1).split('/', 4)
         return f'{owner}/{repo}'
 
     def get_latest_version(self):
