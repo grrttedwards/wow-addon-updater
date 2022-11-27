@@ -108,6 +108,13 @@ It requires that some properties be set, if you do not want to use the defaults 
 - `Game Version`
     - The game version (`retail`, `classic` or `tbc`) that you would like to target for addons 
     - (default `= retail`)
+
+## The `GitHub` Section
+
+To support a higher API request limit, you can add your own [personal GitHub access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) to the configuration.
+The tool will use the token when making requests to GitHub, reducing the chance of you being rate-limited.
+
+To use, uncomment the section in the `config.ini`, and populate the `token` with a value.
     
 ## Multiple configurations
 The module supports a command-line configuration for maintaining multiple set of addons. For example, a set of addons for retail, and a different set of addons for classic.
