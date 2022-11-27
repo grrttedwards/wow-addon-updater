@@ -202,5 +202,13 @@ pipenv-setup sync -d
 1. ????
 1. Profit
 
+# Publishing Releases
+
+This is only available to the repo owner.
+
+1. Commit a new version number to the `VERSION` file
+1. Stamp the `CHANGELOG.md`
+1. Create a new Release: https://github.com/grrttedwards/wow-addon-updater/releases/new
+
 # Thanks
 Shout out to GitHub user [`kuhnertdm`](https://github.com/kuhnertdm) for establishing the original base of this utility, and giving people an alternative to the wasteland of mainstream clients.
