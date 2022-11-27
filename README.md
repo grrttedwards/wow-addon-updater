@@ -2,7 +2,7 @@
 
 This utility provides an alternative to the Twitch/Curse client for management and updating of addons for World of Warcraft. The Twitch/Curse client is rather bloated and buggy, and comes with many features that most users will not ever use in the first place. This utility, however, is lightweight and makes it very easy to manage which addons are being updated, and to update them just by running a python script.
 
-_Supporting retail, classic and tbc addons!_
+_Supporting retail, classic, tbc, and wrath addons!_
 
 [![Build Status](https://github.com/grrttedwards/wow-addon-updater/workflows/Build%20and%20test%20wow-addon-updater/badge.svg?branch=master)](https://github.com/grrttedwards/wow-addon-updater/actions?query=workflow%3A%22Build+and+test+wow-addon-updater%22+branch%3Amaster)
 
@@ -106,7 +106,7 @@ It requires that some properties be set, if you do not want to use the defaults 
     - (default `= installed.ini`)
 
 - `Game Version`
-    - The game version (`retail`, `classic` or `tbc`) that you would like to target for addons 
+    - The game version (`retail`, `classic`, `tbc`, or wrath) that you would like to target for addons 
     - (default `= retail`)
 
 ## The `GitHub` Section

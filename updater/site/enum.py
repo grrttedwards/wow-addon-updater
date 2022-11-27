@@ -6,6 +6,7 @@ class GameVersion(Enum):
     retail = auto()
     classic = auto()
     tbc = auto()
+    wrath = auto()
 
 
 class AddonVersion(IntEnum):
