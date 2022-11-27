@@ -19,7 +19,7 @@ class GitHub(AbstractSite):
 
     @classmethod
     def handles(cls, url: str) -> bool:
-        return bool(re.match('^https://(www.)?github.com/[^/]+/[^/]+/?$', url))
+        return bool(re.match('^https://(www\.)?github\.com/[^/]+/[^/]+/?$', url))
 
     def find_zip_url(self):
         return self.url + '/archive/master.zip'
