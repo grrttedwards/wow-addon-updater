@@ -2,7 +2,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
-from typing import Optional
+from typing import Dict, Optional
 from updater.site.abstract_site import AbstractSite
 from updater.site.github import GitHub
 from updater.site.enum import GameVersion
@@ -13,7 +13,7 @@ class GitHubRelease(AbstractSite):
 
     session = requests.session()
 
-    def __init__(self, url: str, credentials: Optional[dict[str, str]]):
+    def __init__(self, url: str, credentials: Optional[Dict[str, str]]):
         self.headers = {}
         if credentials and (token := credentials.get("token")):
             self.headers["authorization"] = f"token {token}"

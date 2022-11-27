@@ -1,3 +1,4 @@
+from typing import Dict
 from updater.site.abstract_site import AbstractSite
 from updater.site.curse import Curse
 from updater.site.enum import AddonVersion, GameVersion
@@ -13,7 +14,7 @@ class UnknownSiteError(RuntimeError):
 
 
 def get_handler(url: str, game_version: GameVersion,
-                site_credentials: dict[str, dict[str, str]],
+                site_credentials: Dict[str, Dict[str, str]],
                 addon_version: AddonVersion = AddonVersion.release) -> AbstractSite:
     if Curse.handles(url):
         return Curse(url, game_version, addon_version)
