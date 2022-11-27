@@ -15,7 +15,7 @@ class VersionTestData:
     supported_game_versions: Collection[GameVersion]
 
 
-ALL_VERSIONS = (GameVersion.classic, GameVersion.retail, GameVersion.agnostic,GameVersion.tbc)
+ALL_VERSIONS = (GameVersion.classic, GameVersion.retail, GameVersion.agnostic,GameVersion.tbc,GameVersion.wrath)
 
 version_test_data = [
     VersionTestData(url='https://www.curseforge.com/wow/addons/classiccodex',
