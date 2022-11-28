@@ -1,7 +1,10 @@
 # Changelog
 
 ## Unreleased
+
+## v1.10.0 - 11/27/2022
 - Added support for addons in the form of GitHub releases, separately from GitHub commits
+- Added support for Wrath classic addons from some sources
 
 ## v1.9.2 - 08/03/2021
 - Fix bug where an entry in `installed.ini` could be zeroed out if there was an error updating the addon
