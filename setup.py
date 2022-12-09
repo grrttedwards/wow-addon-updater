@@ -25,7 +25,7 @@ setup(
             "black==19.10b0; python_version >= '3.6'",
             "cached-property==1.5.2",
             "cerberus==1.3.4",
-            "certifi==2021.5.30",
+            "certifi==2022.12.7",
             "chardet==4.0.0",
             "click==8.0.1",
             "colorama==0.4.4",
@@ -56,7 +56,7 @@ setup(
     },
     install_requires=[
         "beautifulsoup4==4.9.3",
-        "certifi==2021.5.30",
+        "certifi==2022.12.7",
         "chardet==4.0.0",
         "cloudscraper==1.2.58",
         "idna==2.10",
