@@ -51,7 +51,7 @@ setup(
             "typed-ast==1.4.3",
             "urllib3==1.26.5",
             "vistir==0.5.2",
-            "wheel==0.36.2",
+            "wheel==0.38.1",
         ]
     },
     install_requires=[
